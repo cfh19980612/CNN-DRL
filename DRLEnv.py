@@ -47,7 +47,7 @@ class FedEnv(gym.Env):
             self.Model[i].load_state_dict(P[i])
 
         # global model   
-        self.global_model = self.task.Global_agg(self.client) 
+        self.global_model = self.task.Global_agg(self.client, self.Model) 
         
         accuracy = self.task.CNN_test(epoch,self.Model[0])
 
@@ -57,7 +57,7 @@ class FedEnv(gym.Env):
         for i in range (2):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
-                P_new[x], temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency)
+                P_new[x], temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency, self.Model)
                 Tim.append(temp)
         # update     
         for client in range (self.client):

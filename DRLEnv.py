@@ -57,8 +57,8 @@ class FedEnv(gym.Env):
         for i in range (2):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
-                temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency)
-                P_new = self.task.toModel()
+                P_new,temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency)
+                
                 Tim.append(temp)
         # update     
         for client in range (self.client):

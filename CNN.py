@@ -7,7 +7,6 @@ import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
-import dgl
 import networkx as nx
 import random
 import argparse
@@ -15,7 +14,6 @@ import copy
 import pandas as pd
 import numpy as np
 from utils import progress_bar
-from GAT import GATLayer
 from models import *
 
 

@@ -199,7 +199,11 @@ class cnn(nn.Module):
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
         dataframe.to_csv('CIFAR-GAT-1.csv',mode = 'w', header = False,index=False,sep=',')
-
+    
+    # return model
+    def toModels(self):
+        return self.Model
+    
 
     def forward(self, epoches, Client):
         times, score = [], []

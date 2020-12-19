@@ -201,7 +201,7 @@ class cnn(nn.Module):
         dataframe.to_csv('CIFAR-GAT-1.csv',mode = 'w', header = False,index=False,sep=',')
     
     # return model
-    def toModels(self):
+    def toModel(self):
         return self.Model
     
 

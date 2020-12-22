@@ -1,6 +1,5 @@
 import gym
 from CNN import cnn
-from tqdm import tqdm, trange
 import random
 import math
 import networkx as nx

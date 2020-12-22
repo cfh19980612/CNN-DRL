@@ -36,7 +36,7 @@ if __name__ == '__main__':
             if accuracy > 0.8:
                 env.save_acc(X,Y)
                 break
-            pbar.set_description("Epoch: {}".format(i), "Accuracy: {}".format(accuracy))
+            pbar.set_description("Epoch: {} Accuracy: {}".format(i，accuracy))
         scores_deque.append(score)
         scores.append(score)
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)), end="")

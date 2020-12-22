@@ -99,49 +99,49 @@ class cnn(nn.Module):
                 self.Model[i] = torch.nn.DataParallel(self.Model[i])
                 cudnn.benchmark = True
                 
-#         train_loss = [0 for i in range (Client)]
-#         correct = [0 for i in range (Client)]
-#         total = [0 for i in range (Client)]
-#         Loss = [0 for i in range (Client)]
+        train_loss = [0 for i in range (Client)]
+        correct = [0 for i in range (Client)]
+        total = [0 for i in range (Client)]
+        Loss = [0 for i in range (Client)]
         P = [None for i in range (Client)]
-        for client in range (Client):
-            self.Model[client].train()
-            train_loss = 0
-            correct = 0
-            total = 0
-            Loss = 0
-            for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+#         for client in range (Client):
+#             self.Model[client].train()
+#             train_loss = 0
+#             correct = 0
+#             total = 0
+#             Loss = 0
+#             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
          
-                    inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    self.Optimizer[client].zero_grad()
-                    outputs = self.Model[client](inputs)
-                    Loss = criterion(outputs, targets)
-                    Loss.backward()
-                    self.Optimizer[client].step()
+#                     inputs, targets = inputs.to(self.device), targets.to(self.device)
+#                     self.Optimizer[client].zero_grad()
+#                     outputs = self.Model[client](inputs)
+#                     Loss = criterion(outputs, targets)
+#                     Loss.backward()
+#                     self.Optimizer[client].step()
 
-                    train_loss += Loss.item()
-                    _, predicted = outputs.max(1)
-                    total += targets.size(0)
-                    correct += predicted.eq(targets).sum().item()
+#                     train_loss += Loss.item()
+#                     _, predicted = outputs.max(1)
+#                     total += targets.size(0)
+#                     correct += predicted.eq(targets).sum().item()
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
                     
                     
-#         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#                 if batch_idx < 360:
-#                     client = batch_idx % Client
-#                     self.Model[client].train()
-#                     inputs, targets = inputs.to(self.device), targets.to(self.device)
-#                     self.Optimizer[client].zero_grad()
-#                     outputs = self.Model[client](inputs)
-#                     Loss[client] = criterion(outputs, targets)
-#                     Loss[client].backward()
-#                     self.Optimizer[client].step()
+        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+                if batch_idx < 360:
+                    client = batch_idx % Client
+                    self.Model[client].train()
+                    inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    self.Optimizer[client].zero_grad()
+                    outputs = self.Model[client](inputs)
+                    Loss[client] = criterion(outputs, targets)
+                    Loss[client].backward()
+                    self.Optimizer[client].step()
 
-#                     train_loss[client] += Loss[client].item()
-#                     _, predicted = outputs.max(1)
-#                     total[client] += targets.size(0)
-#                     correct[client] += predicted.eq(targets).sum().item()
+                    train_loss[client] += Loss[client].item()
+                    _, predicted = outputs.max(1)
+                    total[client] += targets.size(0)
+                    correct[client] += predicted.eq(targets).sum().item()
 
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))

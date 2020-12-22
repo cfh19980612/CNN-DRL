@@ -1,5 +1,6 @@
 from DRLEnv import FedEnv
 from DDPG import Agent
+from tqdm import tqdm, trange
 import torch
 import numpy as np
 from collections import deque
@@ -17,7 +18,7 @@ if __name__ == '__main__':
         state = env.reset()
         agent.reset()
         score = 0
-        for t in range(epoches):
+        for i in tqdm(range(100)):
             action = agent.act(state)
             time, accuracy, next_state, reward = env.step(action,t)
             
@@ -34,6 +35,7 @@ if __name__ == '__main__':
             if accuracy > 0.8:
                 env.save_acc(X,Y)
                 break
+            pbar.set_description("Accuracy: %.3f" % accuracy)
         scores_deque.append(score)
         scores.append(score)
         print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)), end="")

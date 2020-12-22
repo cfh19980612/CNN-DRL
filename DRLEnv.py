@@ -82,7 +82,7 @@ class FedEnv(gym.Env):
                     aa = a
                     S_local[i].append(aa)
         s = np.array(S_local).flatten()
-        print (s.size)
+        
         # self.toCsv(times,score)
         reward = pow(64, accuracy-0.8)-1
 
@@ -108,7 +108,7 @@ class FedEnv(gym.Env):
                     aa = a
                     S_local[i].append(aa)
         s = np.array(S_local).flatten()
-        # print (s.size)
+        print (s.size)
 
         return s
     

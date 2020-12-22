@@ -98,8 +98,7 @@ class cnn(nn.Module):
             if self.device == 'cuda':
                 self.Model[i] = torch.nn.DataParallel(self.Model[i])
                 cudnn.benchmark = True
-
-        print('\nEpoch: %d' % epoch)
+                
 #         train_loss = [0 for i in range (Client)]
 #         correct = [0 for i in range (Client)]
 #         total = [0 for i in range (Client)]

@@ -110,6 +110,9 @@ class FedEnv(gym.Env):
         # print (s.size)
 
         return s
+    
+    def save_acc(self, X, Y):
+        self.task.to_csv(X,Y)
 
     def render(self, mode='human'):
         return None

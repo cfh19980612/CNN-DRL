@@ -81,10 +81,10 @@ class cnn(nn.Module):
         print('==> Building model..')
 
         for i in range (Client):
-            self.Model[i] = DenseNet121() if self.net == 'MobileNet' else VGG('VGG19')
+            self.Model[i] = VGG('VGG19') if self.net == 'MobileNet' else VGG('VGG19')
             self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-            global_model = DenseNet121() if self.net == 'MobileNet' else VGG('VGG19')
+            global_model = VGG('VGG19') if self.net == 'MobileNet' else VGG('VGG19')
         return self.Model, global_model
 
     # CNN_train

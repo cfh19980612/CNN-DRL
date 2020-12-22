@@ -1,5 +1,6 @@
 import gym
 from CNN import cnn
+from tqdm import tqdm, trange
 import random
 import math
 import networkx as nx
@@ -54,7 +55,7 @@ class FedEnv(gym.Env):
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood
         # Step 2: aggregate the model from neighborhood
-        for i in range (2):
+        for i in range (3):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
                 P_new[x],temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency)

@@ -124,9 +124,9 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total += targets.size(0)
                     correct += predicted.eq(targets).sum().item()
-
-                    progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                                % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
+                    if client == 9:
+                        progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                                    % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
                     
                     
 #         for batch_idx, (inputs, targets) in enumerate(self.trainloader):

@@ -13,6 +13,7 @@ if __name__ == '__main__':
     scores = []
     for i_episode in range(1, 200+1):
         X, Y = [], []  # x and y axis for test_data
+        start_time = 0
         state = env.reset()
         agent.reset()
         score = 0
@@ -21,7 +22,8 @@ if __name__ == '__main__':
             time, accuracy, next_state, reward = env.step(action,t)
             
             # save accuracy
-            X.append(time)
+            start_time += time
+            X.append(start_time)
             Y.append(accuracy)
             
             agent.step(state, action, reward, next_state)

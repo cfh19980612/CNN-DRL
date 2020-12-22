@@ -20,7 +20,7 @@ if __name__ == '__main__':
         score = 0
         for i in tqdm(range(100)):
             action = agent.act(state)
-            time, accuracy, next_state, reward = env.step(action,t)
+            time, accuracy, next_state, reward = env.step(action,i)
             
             # save accuracy
             start_time += time

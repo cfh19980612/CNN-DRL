@@ -37,7 +37,7 @@ class cnn(nn.Module):
     def Set_dataset(self):
         if self.dataset is 'CIFAR10':
             parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-            parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.05, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
             args = parser.parse_args()
@@ -106,7 +106,7 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         P = [None for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-            if batch_idx < 360:
+            if batch_idx < 250:
                 client = batch_idx % Client
                 self.Model[client].train()
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
@@ -164,13 +164,13 @@ class cnn(nn.Module):
         for key, value in P.items():
             m = 0
             for j in range (Client):
-                if p[i,j] > 0 and p[i,j] < 1 and i != j:
+                if p[i,j] > 0 and p[i,j] < 1:
                     
                     # P[key] = P[key] + (self.g.edata['a'][self.g.edge_ids(i,j)])[0,]*Q[j][key]
                     P[key] = P[key] + p[i,j]*Q[j][key]
                     # P[key] = torch.true_divide(P[key],2)
                     m = m + 1
-            P[key] = torch.true_divide(P[key],m+1)
+            # P[key] = torch.true_divide(P[key],m+1)
             
         for j in range (Client):
             # if self.G.has_edge(i,j):

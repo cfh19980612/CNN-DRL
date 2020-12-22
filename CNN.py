@@ -168,8 +168,8 @@ class cnn(nn.Module):
             pred_y = torch.max(test_output, 1)[1].data.cpu().numpy()
             accuracy = float((pred_y == targets.data.numpy()).astype(int).sum()) / float(targets.size(0))
             # accuracy = Test(epoch,global_model)
-        print ('\n')
-        print('Epoch: ', epoch, '| test accuracy: %.2f' % accuracy)
+#         print ('\n')
+#         print('Epoch: ', epoch, '| test accuracy: %.2f' % accuracy)
         # free gpu
         if self.device == 'cuda':
             Model.cpu()

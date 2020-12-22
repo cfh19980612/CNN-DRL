@@ -38,7 +38,7 @@ class FedEnv(gym.Env):
         # # GAT network
         # net = GATLayer(self.g,in_dim = 864,out_dim = 20)
 
-        time_list, accuracy_list = [], []
+        Tim, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
 
         P = self.task.CNN_train(epoch, self.client)

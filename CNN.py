@@ -170,7 +170,7 @@ class cnn(nn.Module):
                     P[key] = P[key] + p[i,j]*Q[j][key]
                     # P[key] = torch.true_divide(P[key],2)
                     m = m + 1
-            # P[key] = torch.true_divide(P[key],m+1)
+            P[key] = torch.true_divide(P[key],m+1)
             
         for j in range (Client):
             # if self.G.has_edge(i,j):

@@ -38,7 +38,7 @@ class FedEnv(gym.Env):
         # # GAT network
         # net = GATLayer(self.g,in_dim = 864,out_dim = 20)
 
-        Tim, Loss = [], []
+        time_list, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
 
         P = self.task.CNN_train(epoch, self.client)
@@ -83,7 +83,7 @@ class FedEnv(gym.Env):
                     S_local[i].append(aa)
         s = np.array(S_local).flatten()
         # self.toCsv(times,score)
-        reward = pow(512, accuracy-0.98)
+        reward = pow(512, accuracy-0.98)-1
 
         return t, accuracy, s, reward
 

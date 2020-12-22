@@ -37,7 +37,7 @@ class cnn(nn.Module):
     def Set_dataset(self):
         if self.dataset is 'CIFAR10':
             parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-            parser.add_argument('--lr', default=0.05, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
             args = parser.parse_args()
@@ -81,10 +81,10 @@ class cnn(nn.Module):
         print('==> Building model..')
 
         for i in range (Client):
-            self.Model[i] = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
+            self.Model[i] = DenseNet121() if self.net == 'MobileNet' else VGG('VGG19')
             self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-            global_model = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
+            global_model = DenseNet121() if self.net == 'MobileNet' else VGG('VGG19')
         return self.Model, global_model
 
     # CNN_train
@@ -106,7 +106,7 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         P = [None for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-            if batch_idx < 250:
+            if batch_idx < 360:
                 client = batch_idx % Client
                 self.Model[client].train()
                 inputs, targets = inputs.to(self.device), targets.to(self.device)

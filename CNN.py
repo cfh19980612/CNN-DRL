@@ -163,16 +163,14 @@ class cnn(nn.Module):
             Q.append(copy.deepcopy(self.Model[j].state_dict()))
         for key, value in P.items():
             m = 0
-            temp = 0
             for j in range (Client):
-                if p[i,j] > 0 and p[i,j] < 1:
+                if p[i,j] > 0 and p[i,j] < 1 and i =! j:
                     
                     # P[key] = P[key] + (self.g.edata['a'][self.g.edge_ids(i,j)])[0,]*Q[j][key]
-                    temp += p[i,j]*Q[j][key]
+                    P[key] += p[i,j]*Q[j][key]
                     # P[key] = torch.true_divide(P[key],2)
                     m = m + 1
-            p[key] += temp
-            # P[key] = torch.true_divide(P[key],m+1)
+            P[key] = torch.true_divide(P[key],m+1)
             
         for j in range (Client):
             # if self.G.has_edge(i,j):

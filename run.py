@@ -8,7 +8,7 @@ if __name__ == '__main__':
     print (torch.cuda.is_available())
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 2)  # env
-    agent = Agent(state_size=8640, action_size=100, random_seed=2)  # agent
+    agent = Agent(state_size=17280, action_size=100, random_seed=2)  # agent
     scores_deque = deque(maxlen=print_every)
     scores = []
     for i_episode in range(1, 200+1):

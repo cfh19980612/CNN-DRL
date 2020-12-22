@@ -19,6 +19,7 @@ if __name__ == '__main__':
         agent.reset()
         score = 0
         for i in tqdm(range(100)):
+            pbar = tqdm(range(100))
             action = agent.act(state)
             time, accuracy, next_state, reward = env.step(action,i)
             

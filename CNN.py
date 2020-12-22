@@ -164,7 +164,7 @@ class cnn(nn.Module):
         for key, value in P.items():
             m = 0
             for j in range (Client):
-                if p[i,j] > 0 and p[i,j] < 1 and i =! j:
+                if p[i,j] > 0 and p[i,j] < 1 and i != j:
                     
                     # P[key] = P[key] + (self.g.edata['a'][self.g.edge_ids(i,j)])[0,]*Q[j][key]
                     P[key] += p[i,j]*Q[j][key]

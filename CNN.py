@@ -177,7 +177,7 @@ class cnn(nn.Module):
     # local_aggregate
     def Local_agg(self, model, i, Client, p, latency):
         # print ('Action: ',p)
-        p = np.array(p).reshape((10,10))
+        p = np.array(p).reshape((Client,Client))
         # print ('P: ', p)   
         time = 0
         Q = []

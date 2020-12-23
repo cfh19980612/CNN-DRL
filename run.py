@@ -3,6 +3,7 @@ from DDPG import Agent
 from tqdm import tqdm, trange
 import torch
 import numpy as np
+import pandas as pd
 from collections import deque
 
 if __name__ == '__main__':
@@ -33,7 +34,7 @@ if __name__ == '__main__':
             score += reward
             
             # end?
-            if accuracy > 0.8:
+            if accuracy > 0.9:
                 env.save_acc(X,Y)
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f" %(i, accuracy))

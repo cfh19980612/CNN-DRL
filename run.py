@@ -47,7 +47,7 @@ if __name__ == '__main__':
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
         
         # save reward
-        dataframe = pd.DataFrame(X_reward, columns=['X'])
+        dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
         dataframe.to_csv("/home/ICDCS/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
         

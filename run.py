@@ -13,7 +13,7 @@ if __name__ == '__main__':
     agent = Agent(state_size=5184, action_size=9, random_seed=2)  # agent
     scores_deque = deque(maxlen=print_every)
     scores = []
-    X_reward = []
+    episode = []
     for i_episode in range(1, 200+1):
         X, Y = [], []  # x and y axis for test_data
         start_time = 0
@@ -41,7 +41,7 @@ if __name__ == '__main__':
             pbar.set_description("Epoch: %d Accuracy: %.3f" %(i, accuracy))
         scores_deque.append(score)
         scores.append(score)
-        X_reward.append(i_episode)
+        episode.append(i_episode)
         print('\rEpisode {}\tAverage Score: {:.3f}'.format(i_episode, np.mean(scores_deque)), end="")
         torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')

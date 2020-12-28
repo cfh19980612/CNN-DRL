@@ -203,7 +203,7 @@ class cnn(nn.Module):
     def Global_agg(self, Client):
 
         P = copy.deepcopy(self.Model[0].state_dict())
-        for key in P.items():  
+        for key, value in P.items():  
             for i in range (1,Client,1):
                 temp = copy.deepcopy(self.Model[i].state_dict())
                 P[key] = P[key] + temp[key]

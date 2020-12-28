@@ -12,7 +12,7 @@ def hidden_init(layer):
 class Actor(nn.Module):
     """Actor (Policy) Model."""
 
-    def __init__(self, state_size, action_size, seed, fc1_units=500, fc2_units=100):
+    def __init__(self, state_size, action_size, seed, fc1_units=1000, fc2_units=300):
         """Initialize parameters and build model.
         Params
         ======
@@ -38,7 +38,7 @@ class Actor(nn.Module):
         """Build an actor (policy) network that maps states -> actions."""
         x = F.relu(self.fc1(state))
         x = F.relu(self.fc2(x))
-        return torch.sigmoid(self.fc3(x))
+        return F.relu(self.fc3(x))
 
 
 class Critic(nn.Module):

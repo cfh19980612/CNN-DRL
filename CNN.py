@@ -208,7 +208,7 @@ class cnn(nn.Module):
                 temp = copy.deepcopy(self.Model[i].state_dict())
                 P[key] = P[key] + temp[key]
             P[key] = torch.true_divide(P[key],Client)
-        return temp[0]
+        return temp
 
     # step time cost
     def step_time(self, T):

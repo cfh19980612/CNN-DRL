@@ -175,9 +175,9 @@ class cnn(nn.Module):
         return accuracy
 
     # local_aggregate
-    def Local_agg(self, model, i, Client, p, latency):
+    def Local_agg(self, model, i, Client, Imp, latency):
         # print ('Action: ',p)
-        p = np.array(p).reshape((Client,Client))
+        Imp = np.array(Imp).reshape((Client,Client))
         # print ('P: ', p)   
         time = 0
         Q = []
@@ -187,7 +187,7 @@ class cnn(nn.Module):
         for key, value in P.items():
             m = 0
             for j in range (Client):
-                if p[i,j] > 0:
+                if Imp[i,j] > 0:
                     # P[key] = P[key] + (self.g.edata['a'][self.g.edge_ids(i,j)])[0,]*Q[j][key]
                     P[key] = P[key] + Q[j][key]
                     # P[key] = torch.true_divide(P[key],2)
@@ -203,7 +203,7 @@ class cnn(nn.Module):
     def Global_agg(self, Client):
 
         P = copy.deepcopy(self.Model[0].state_dict())
-        for key in temp[0].items():  
+        for key in P.items():  
             for i in range (1,Client,1):
                 temp = copy.deepcopy(self.Model[i].state_dict())
                 P[key] = temp[key] + temp[i][key]

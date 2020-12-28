@@ -206,7 +206,7 @@ class cnn(nn.Module):
         for key in P.items():  
             for i in range (1,Client,1):
                 temp = copy.deepcopy(self.Model[i].state_dict())
-                P[key] = temp[key] + temp[i][key]
+                P[key] = P[key] + temp[key]
             P[key] = torch.true_divide(P[key],Client)
         return temp[0]
 

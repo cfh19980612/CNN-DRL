@@ -207,7 +207,7 @@ class cnn(nn.Module):
         for key in temp[0].items():  
             for i in range (Client):
                 if i != 0:
-                    temp[0][key] += temp[i][key]
+                    temp[0][key] = temp[0][key] + temp[i][key]
             temp[0][key] = torch.true_divide(temp[0][key],Client)
         return temp[0]
 

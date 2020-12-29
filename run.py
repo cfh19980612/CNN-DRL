@@ -23,11 +23,11 @@ if __name__ == '__main__':
         state = env.reset()
         agent.reset()
         score = 0
-        pbar = tqdm(range(200)
 
                     
         reward_y = []
         episode_x = []
+        pbar = tqdm(range(200)
                     
         for i in pbar:
             action = agent.act(state)

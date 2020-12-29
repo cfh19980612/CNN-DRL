@@ -111,18 +111,17 @@ class cnn(nn.Module):
             total = 0
             Loss = 0
             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                if batch_idx < 101:
-                    inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    self.Optimizer[client].zero_grad()
-                    outputs = self.Model[client](inputs)
-                    Loss = criterion(outputs, targets)
-                    Loss.backward()
-                    self.Optimizer[client].step()
+                inputs, targets = inputs.to(self.device), targets.to(self.device)
+                self.Optimizer[client].zero_grad()
+                outputs = self.Model[client](inputs)
+                Loss = criterion(outputs, targets)
+                Loss.backward()
+                self.Optimizer[client].step()
 
-                    train_loss += Loss.item()
-                    _, predicted = outputs.max(1)
-                    total += targets.size(0)
-                    correct += predicted.eq(targets).sum().item()
+                train_loss += Loss.item()
+                _, predicted = outputs.max(1)
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
                     

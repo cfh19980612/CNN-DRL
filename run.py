@@ -28,6 +28,7 @@ if __name__ == '__main__':
         episode_x = []
         ##############################
         pbar = tqdm(range(200)
+                    
         for i in pbar:
             action = agent.act(state)
             time, accuracy, next_state, reward = env.step(action,i)

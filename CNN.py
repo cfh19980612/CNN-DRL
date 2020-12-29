@@ -190,10 +190,10 @@ class cnn(nn.Module):
             for j in range (Client):
                 if Imp[i,j] > 0:
                     # P[key] = P[key] + (self.g.edata['a'][self.g.edge_ids(i,j)])[0,]*Q[j][key]
-                    P[key] = P[key] + Q[j][key]
+                    P[key] = P[key] + Imp[i,j]*Q[j][key]
                     # P[key] = torch.true_divide(P[key],2)
-                    m = m + 1
-            P[key] = torch.true_divide(P[key],m+1)
+                    m = m + Imp[i,j]
+            P[key] = torch.true_divide(P[key],m)
             
         for j in range (Client):
             # if self.G.has_edge(i,j):

@@ -14,13 +14,18 @@ if __name__ == '__main__':
     scores_deque = deque(maxlen=print_every)
     scores = []
     episode = []
+    
+    
+    
     for i_episode in range(1, 200+1):
         X, Y = [], []  # x and y axis for test_data
         start_time = 0
         state = env.reset()
         agent.reset()
         score = 0
-        pbar = tqdm(range(100))
+        pbar = tqdm(range(200)
+        reward_y = []
+        episode_x = []
         for i in pbar:
             action = agent.act(state)
             time, accuracy, next_state, reward = env.step(action,i)
@@ -33,12 +38,22 @@ if __name__ == '__main__':
             agent.step(state, action, reward, next_state)
             state = next_state
             score += reward
-            
+                    
+            ################################################
+            reward_y.append(reward)
+            episode_x.append(i)
+            ################################################
+                    
             # end?
-            if accuracy > 0.7:
+            if accuracy > 0.95:
                 env.save_acc(X,Y)
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f" %(i, accuracy))
+        #########################################################
+        dataframe = pd.DataFrame(episode_x, columns=['X'])
+        dataframe = pd.concat([dataframe, pd.DataFrame(reward_y,columns=['Y'])],axis=1)
+        dataframe.to_csv("/home/ICDCS/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
+        #########################################################
         scores_deque.append(score)
         scores.append(score)
         episode.append(i_episode)
@@ -46,10 +61,10 @@ if __name__ == '__main__':
         torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
         
-        # save reward
-        dataframe = pd.DataFrame(episode, columns=['X'])
-        dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
-        dataframe.to_csv("/home/ICDCS/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
+#         # save reward
+#         dataframe = pd.DataFrame(episode, columns=['X'])
+#         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
+#         dataframe.to_csv("/home/ICDCS/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
         
         if i_episode % print_every == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))

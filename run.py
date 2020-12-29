@@ -35,7 +35,7 @@ if __name__ == '__main__':
             score += reward
             
             # end?
-            if accuracy > 0.825:
+            if accuracy > 0.7:
                 env.save_acc(X,Y)
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f" %(i, accuracy))

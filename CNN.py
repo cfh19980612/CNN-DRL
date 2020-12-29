@@ -37,7 +37,7 @@ class cnn(nn.Module):
     def Set_dataset(self):
         if self.dataset is 'CIFAR10':
             parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-            parser.add_argument('--lr', default=0.05, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
             args = parser.parse_args()

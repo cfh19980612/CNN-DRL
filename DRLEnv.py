@@ -84,7 +84,7 @@ class FedEnv(gym.Env):
         s = np.array(S_local).flatten()
         
         # self.toCsv(times,score)
-        reward = pow(128, accuracy-0.8)-0.05*t
+        reward = pow(128, accuracy-0.8)-0.1*t
 
         return t, accuracy, s, reward
 

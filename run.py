@@ -45,10 +45,12 @@ if __name__ == '__main__':
                     
             # end?
             if accuracy > 0.80:
-                env.save_acc(X,Y)
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f Reward: %.3f" %(i, accuracy,reward))
-
+        
+        # save accuracy
+        env.save_acc(X,Y)
+        
         scores_deque.append(score)
         scores.append(score)
         episode.append(i_episode)

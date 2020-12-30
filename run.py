@@ -9,8 +9,8 @@ from collections import deque
 if __name__ == '__main__':
     print (torch.cuda.is_available())
     epoches, print_every = 200, 100
-    env = FedEnv(Client = 3, k = 2)  # env
-    agent = Agent(state_size=2592, action_size=9, random_seed=2)  # agent
+    env = FedEnv(Client = 2, k = 2)  # env
+    agent = Agent(state_size=1728, action_size=4, random_seed=2)  # agent
     scores_deque = deque(maxlen=print_every)
     scores = []
     episode = []
@@ -44,7 +44,7 @@ if __name__ == '__main__':
                     
                     
             # end?
-            if accuracy > 0.80:
+            if accuracy > 0.89001:
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f Reward: %.3f" %(i, accuracy,reward))
         

@@ -128,6 +128,7 @@ class FedEnv(gym.Env):
                 temp[0] = S[i,0]
                 temp[1] = S[i,1]
                 s = np.concatenate((s,temp), axis=0)
+        print(s.shape)
         s = pca.fit_transform(s)
 #             print('without flatten: ',S_local[i].shape)
 #             S_local[i] = S_local[i].flatten().reshape(1,-1)

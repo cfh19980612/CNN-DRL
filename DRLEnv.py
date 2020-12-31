@@ -112,7 +112,7 @@ class FedEnv(gym.Env):
             for j in range(len(Name)):
 #                 for a in parm_local[Name[j]][0::].flatten():
 #                     S_local[i].append(a)
-                S_local[i].append(parm_local[Name[j]][0::])
+                S_local[i].append(parm_local[Name[j]][0::].flatten())
             temp = np.array(S_local[i]).flatten()
             print(temp.shape)
             assert temp.shape[1] == 1

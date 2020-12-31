@@ -81,7 +81,7 @@ class FedEnv(gym.Env):
                 Name.append(name)
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
-                    S_local[i].append(aa)
+                    S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
             S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
@@ -108,7 +108,7 @@ class FedEnv(gym.Env):
                 Name.append(name)
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
-                    S_local[i].append(aa)
+                    S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
             S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()

@@ -98,11 +98,11 @@ class FedEnv(gym.Env):
     def reset(self):
         self.Model, global_model = self.task.Set_Environment(self.client)
         # PCA
-        parm_local = {}
+                parm_local = {}
         Name = []
-        S = []
         S_local = [None for i in range (self.client)]
         pca = PCA(n_components = 100)
+        
         for i in range (self.client):
             S_local[i] = []
             for name, parameters in self.Model[i].named_parameters():
@@ -110,15 +110,13 @@ class FedEnv(gym.Env):
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
             for j in range(len(Name)):
-#                 for a in parm_local[Name[j]][0::].flatten():
-#                     S_local[i].append(a)
-                S_local[i].append(parm_local[Name[j]][0::].flatten())
-            temp = np.array(S_local[i]).flatten()
-            print(temp.shape)
-            assert temp.shape[1] == 1
-            temp = temp.reshape(images.shape[0], images.shape[1])
-            S.append(pca.fit_transform(temp))
-        s = np.array(S).flatten()
+                for a in parm_local[Name[j]][0::].flatten():
+                    S_local[i].append(a)
+            S_local[i] = np.array(S_local[i]).flatten()
+            print(S_local[i].shape)
+            S_local[i].reshape(-1, 1)
+            S_local[i] = pca.fit_transform(S_local[i])
+        s = np.array(S_local).flatten()
         print (s.size)
 
         return s

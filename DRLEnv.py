@@ -101,7 +101,7 @@ class FedEnv(gym.Env):
         parm_local = {}
         Name = []
         S_local = [None for i in range (self.client)]
-        pca = PCA(n_components = 100)
+        pca = PCA(n_components = 1)
         
         for i in range (self.client):
             S_local[i] = []
@@ -114,7 +114,7 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
             print(S_local[i].shape)
-            S_local[i] = pca.transform(S_local[i])
+            S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
         print (s.size)
 

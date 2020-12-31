@@ -79,7 +79,7 @@ class FedEnv(gym.Env):
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
-            for j in range(Name.len()):
+            for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(aa)
             S_local[i] = np.array(S_local[i]).flatten()
@@ -106,7 +106,7 @@ class FedEnv(gym.Env):
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
-            for j in range(Name.len()):
+            for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(aa)
             S_local[i] = np.array(S_local[i]).flatten()

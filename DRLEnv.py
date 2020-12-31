@@ -71,18 +71,19 @@ class FedEnv(gym.Env):
         parm_local = {}
         Name = []
         S_local = [None for i in range (self.client)]
+        pca = PCA(n_components = 100)
         for i in range (self.client):
             S_local[i] = []
             for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
-            
-            for a in parm_local[Name[0]][0::].flatten():
-                    aa = a
+            for j in range(Name.size):
+                for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(aa)
+            S_local[i] = np.array(S_local[i]).flatten()
+            S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
-        
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.8)-0.1*t
 
@@ -97,16 +98,18 @@ class FedEnv(gym.Env):
         parm_local = {}
         Name = []
         S_local = [None for i in range (self.client)]
+        pca = PCA(n_components = 100)
         for i in range (self.client):
             S_local[i] = []
             for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
-                parm_local[name] = parameters.detach().cpu().numpy()
+                parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
-            
-            for a in parm_local[Name[0]][0::].flatten():
-                    aa = a
+            for j in range(Name.size):
+                for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(aa)
+            S_local[i] = np.array(S_local[i]).flatten()
+            S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
         print (s.size)
 

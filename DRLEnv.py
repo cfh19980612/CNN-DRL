@@ -114,7 +114,7 @@ class FedEnv(gym.Env):
                     if j == 0:
                         S_local[i] = np.array(a)
                     else:
-                        np.concatenate(S_local[i],np.array(a))
+                        S_local[i] = np.concatenate(S_local[i],np.array(a))
             # S_local[i] = np.array(S_local[i])
             print('without flatten: ',S_local[i].shape)
             S_local[i] = S_local[i].flatten().reshape(1,-1)

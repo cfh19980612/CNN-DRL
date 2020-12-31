@@ -119,7 +119,7 @@ class FedEnv(gym.Env):
         S = np.reshape(S_local,(3217226,2))
         
         s = np.empty((2,1))
-        for i in range (3217226):
+        for i in range (1000):
             if i == 1:
                 s[0] = S[i,0]
                 s[1] = S[i,1]

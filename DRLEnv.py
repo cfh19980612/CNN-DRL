@@ -109,8 +109,9 @@ class FedEnv(gym.Env):
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
             for j in range(len(Name)):
-                for a in parm_local[Name[j]][0::].flatten():
-                    S_local[i].append(a)
+#                 for a in parm_local[Name[j]][0::].flatten():
+#                     S_local[i].append(a)
+                S_local[i].append(parm_local[Name[j]])
             temp = np.array(S_local[i]).flatten().reshape(1,-1)
             S.append(pca.fit_transform(temp))
         s = np.array(S).flatten()

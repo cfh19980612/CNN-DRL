@@ -114,7 +114,8 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
             print(S_local[i].shape)
-            S_local[i].reshape(-1, 1)
+            assert S_local[i].shape[3] == 1
+            images = S_local[i].reshape(images.shape[0], images.shape[1], images.shape[2])
             S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
         print (s.size)

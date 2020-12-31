@@ -100,9 +100,8 @@ class FedEnv(gym.Env):
         # PCA
         parm_local = {}
         Name = []
-        S_local = [None for i in range (self.client)]
         pca = PCA(n_components = 100)
-        
+        S_local = [None for i in range (self.client)]
         for i in range (self.client):
             S_local[i] = []
             for name, parameters in self.Model[i].named_parameters():
@@ -112,13 +111,16 @@ class FedEnv(gym.Env):
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(a)
-            S_local[i] = np.ndarray(S_local[i])
-            print('without flatten: ',S_local[i].shape)
-            S_local[i] = S_local[i].flatten().reshape(1,-1)
-            print('without pca: ',S_local[i].shape)
-            S_local[i] = pca.fit(S_local[i])
-            print('with pca: ',S_local[i].shape)
-        s = np.array(S_local).flatten()
+            S_local[i] = np.array(S_local[i])
+        S_local = np.ndarray(S_local)
+        print(S_local[i].shape)
+#             print('without flatten: ',S_local[i].shape)
+#             S_local[i] = S_local[i].flatten().reshape(1,-1)
+#             print('without pca: ',S_local[i].shape)
+#             S_local[i] = pca.fit(S_local[i])
+#             print('with pca: ',S_local[i].shape)
+#         s = np.array(S_local).flatten()
+        
         print (s.size)
 
         return s

@@ -98,7 +98,7 @@ class FedEnv(gym.Env):
     def reset(self):
         self.Model, global_model = self.task.Set_Environment(self.client)
         # PCA
-                parm_local = {}
+        parm_local = {}
         Name = []
         S_local = [None for i in range (self.client)]
         pca = PCA(n_components = 100)

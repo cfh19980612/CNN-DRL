@@ -114,6 +114,7 @@ class FedEnv(gym.Env):
             temp = np.array(temp)
             S_local.append(temp)
         S_local = np.array(S_local)
+        print(S_local.shape)
         S = np.reshape(S_local,(3217226,2))
         print(S.shape)
 #             print('without flatten: ',S_local[i].shape)

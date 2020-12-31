@@ -4,6 +4,7 @@ import random
 import math
 import networkx as nx
 import numpy as np
+from sklearn.decomposition import PCA
 
 class FedEnv(gym.Env):
     metadata = {

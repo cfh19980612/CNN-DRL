@@ -113,7 +113,7 @@ class FedEnv(gym.Env):
                     temp.append(a)
             temp = np.array(temp).flatten()
             S_local.append(temp)
-        S_local = np.array(S_local)
+        S_local = np.array(S_local).flatten()
         print(S_local.shape)
         S = np.reshape(S_local,(3217226,2))
         print(S.shape)

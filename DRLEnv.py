@@ -111,7 +111,7 @@ class FedEnv(gym.Env):
                 Name.append(name)
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
-                    S_local[i].append(a)
+                    S_local[i].append(np.array(a))
             S_local[i] = np.array(S_local[i])
             print('without flatten: ',S_local[i].shape)
             S_local[i] = S_local[i].flatten().reshape(1,-1)

@@ -104,15 +104,18 @@ class FedEnv(gym.Env):
         pca = PCA(n_components = 100)
         
         for i in range (self.client):
-            S_local[i] = []
+            S_local[i] = np.empty(shape=[1,1])
             for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
-                    S_local[i].append(np.array(a))
-            S_local[i] = np.array(S_local[i])
+                    if j == 0:
+                        S_local[i] = np.ndarray(a)
+                    else:
+                        np.concatenate(S_local[i],np.ndarray(a))
+            # S_local[i] = np.array(S_local[i])
             print('without flatten: ',S_local[i].shape)
             S_local[i] = S_local[i].flatten().reshape(1,-1)
             print('without pca: ',S_local[i].shape)

@@ -112,9 +112,9 @@ class FedEnv(gym.Env):
             for j in range(len(Name)):
                 for a in parm_local[Name[j]][0::].flatten():
                     if j == 0:
-                        S_local[i] = np.array(a)
+                        S_local[i] = np.ndarray(a)
                     else:
-                        S_local[i] = np.concatenate((S_local[i],np.array(a)))
+                        S_local[i] = np.concatenate((S_local[i],np.ndarray(a)))
             # S_local[i] = np.array(S_local[i])
             print('without flatten: ',S_local[i].shape)
             S_local[i] = S_local[i].flatten().reshape(1,-1)

@@ -83,6 +83,7 @@ class FedEnv(gym.Env):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
+            S_local[i].reshape(-1, 1)
             S_local[i] = pca.fit_transform(S_local[i])
         s = np.array(S_local).flatten()
         # self.toCsv(times,score)

@@ -16,13 +16,15 @@ class FedEnv(gym.Env):
         self.client = Client
         self.p = 0.5
         self.Model = []
-
+          
         # small world
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
 
         # To DGL graph
         # self.g = dgl.from_networkx(self.G)
-
+        
+        # PCA
+        self.pca = PCA(n_components = self.client)
         # latency simulation
         self.latency = [[0 for i in range (self.client)]for j in range (self.client)]
         for i in range (self.client):
@@ -84,13 +86,15 @@ class FedEnv(gym.Env):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
-            S_local[i].reshape(-1, 1)
-            S_local[i] = pca.fit_transform(S_local[i])
-        s = np.array(S_local).flatten()
+            print(S_local[i].shape)
+        S_local = np.array(S_local[1]).flatten()
+
+        S = np.reshape(S_local,(3217226,self.client))
+        state = pca.fit_transform(S)
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.8)-0.1*t
 
-        return t, accuracy, s, reward
+        return t, accuracy, state, reward
 
 
 
@@ -117,10 +121,8 @@ class FedEnv(gym.Env):
         S_local = np.array(S_local[1]).flatten()
 
         S = np.reshape(S_local,(3217226,self.client))
-        pca = PCA(n_components = self.client)
         pca.fit(S)
         state = pca.fit_transform(S)
-        print(state)
         # print(S.shape)
         
 #             print('without flatten: ',S_local[i].shape)
@@ -130,9 +132,8 @@ class FedEnv(gym.Env):
 #             print('with pca: ',S_local[i].shape)
 #         s = np.array(S_local).flatten()
         
-        print (s.size)
 
-        return s
+        return state
     
     def save_acc(self, X, Y):
         self.task.toCsv(X,Y)

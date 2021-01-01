@@ -19,7 +19,7 @@ if __name__ == '__main__':
     
     for i_episode in range(1, 200+1):
         X, Y = [], []  # x and y axis for test_data
-        start_time = 0
+        start_time == 0
         # initialize pca ?
         if i_episode = 0:
             state = env.reset(Tag = True)

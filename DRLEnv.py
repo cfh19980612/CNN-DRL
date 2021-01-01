@@ -102,7 +102,7 @@ class FedEnv(gym.Env):
 
 
     
-    def reset(self):
+    def reset(self, Tag):
         self.Model, global_model = self.task.Set_Environment(self.client)
         # PCA
         parm_local = {}   
@@ -124,8 +124,9 @@ class FedEnv(gym.Env):
         # convert to [num_samples, num_features]
         S = np.reshape(S_local,(self.client,3217226))
         
-        # pca training
-        self.pca.fit(S)
+        # pca training ?
+        if Tag:
+            self.pca.fit(S)
         state = self.pca.fit_transform(S)
         state = state.flatten()
         

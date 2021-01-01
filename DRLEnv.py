@@ -116,8 +116,8 @@ class FedEnv(gym.Env):
             print(S_local[i].shape)
         S_local = np.array(S_local[1]).flatten()
 
-        S = np.reshape(S_local,(3217226,2))
-        pca = PCA(n_components = 100)
+        S = np.reshape(S_local,(3217226,self.client))
+        pca = PCA(n_components = self.client)
         pca.fit(S)
         state = pca.fit_transform(S)
         print(state)

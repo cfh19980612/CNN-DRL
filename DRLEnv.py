@@ -87,9 +87,13 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
             print(S_local[i].shape)
+        # to 1-axis
         S_local = np.array(S_local[1]).flatten()
-
+        
+        # convert to [num_samples, num_features]
         S = np.reshape(S_local,(3217226,self.client))
+        
+        # pca
         state = pca.fit_transform(S)
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.8)-0.1*t
@@ -117,10 +121,13 @@ class FedEnv(gym.Env):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
-            print(S_local[i].shape)
+        # to 1-axis
         S_local = np.array(S_local[1]).flatten()
-
+        
+        # convert to [num_samples, num_features]
         S = np.reshape(S_local,(3217226,self.client))
+        
+        # pca training
         pca.fit(S)
         state = pca.fit_transform(S)
         # print(S.shape)

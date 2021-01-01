@@ -118,18 +118,13 @@ class FedEnv(gym.Env):
 
         S = np.reshape(S_local,(3217226,2))
         
-        s = np.empty((2,1))
-        for i in range (1000):
-            if i == 1:
-                s[0] = S[i,0]
-                s[1] = S[i,1]
-            else:
-                temp = np.empty((2,1))
-                temp[0] = S[i,0]
-                temp[1] = S[i,1]
-                s = np.concatenate((s,temp),axis = 0)
-        print(s.shape)
-        s = pca.fit_transform(s)
+        print(S.shape)
+        pca = None
+        if pca is None:
+            pca = PCA(n_components=100)
+            S = pca.fit_transform(S)
+        else:
+            S = pca.transform(S)
 #             print('without flatten: ',S_local[i].shape)
 #             S_local[i] = S_local[i].flatten().reshape(1,-1)
 #             print('without pca: ',S_local[i].shape)

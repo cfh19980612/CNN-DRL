@@ -86,7 +86,7 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
         # to 1-axis
-        S_local = np.array(S_local[self.client - 1]).flatten()
+        S_local = np.array(S_local).flatten()
         
         # convert to [num_samples, num_features]
         S = np.reshape(S_local,(self.client,3217226))

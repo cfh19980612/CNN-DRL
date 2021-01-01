@@ -127,7 +127,7 @@ class FedEnv(gym.Env):
                 temp = np.empty((2,1))
                 temp[0] = S[i,0]
                 temp[1] = S[i,1]
-                s = np.stack((s,temp), axis=0)
+                s = np.concatenate((s,temp),axis = 0)
         print(s.shape)
         s = pca.fit_transform(s)
 #             print('without flatten: ',S_local[i].shape)

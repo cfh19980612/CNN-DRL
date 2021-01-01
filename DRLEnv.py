@@ -72,12 +72,11 @@ class FedEnv(gym.Env):
 
         # PCA
         parm_local = {}
-        Name = []
-        S_local = [None for i in range (self.client)]
-        pca = PCA(n_components = 100)
+        S_local = [None for i in range (self.client)
         
         for i in range (self.client):
             S_local[i] = []
+            Name = []
             for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
@@ -87,13 +86,13 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
         # to 1-axis
-        S_local = np.array(S_local[1]).flatten()
+        S_local = np.array(S_local[self.client - 1]).flatten()
         
         # convert to [num_samples, num_features]
         S = np.reshape(S_local,(3217226,self.client))
         
         # pca
-        state = pca.fit_transform(S)
+        state = self.pca.fit_transform(S)
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.8)-0.1*t
 
@@ -105,13 +104,11 @@ class FedEnv(gym.Env):
     def reset(self):
         self.Model, global_model = self.task.Set_Environment(self.client)
         # PCA
-        parm_local = {}
-        Name = []
+        parm_local = {}   
         S_local = [None for i in range (self.client)]
-        
-        
         for i in range (self.client):
             S_local[i] = []
+            Name = []
             for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
@@ -121,14 +118,14 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
         # to 1-axis
-        S_local = np.array(S_local[1]).flatten()
+        S_local = np.array(S_local).flatten()
         
         # convert to [num_samples, num_features]
         S = np.reshape(S_local,(3217226,self.client))
         
         # pca training
-        pca.fit(S)
-        state = pca.fit_transform(S)
+        self.pca.fit(S)
+        state = self.pca.fit_transform(S)
         # print(S.shape)
         
 #             print('without flatten: ',S_local[i].shape)

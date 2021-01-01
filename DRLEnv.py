@@ -126,7 +126,8 @@ class FedEnv(gym.Env):
         # pca training
         self.pca.fit(S)
         state = self.pca.fit_transform(S)
-        # print(S.shape)
+        state = state.flatten()
+        print(state.shape)
         
 #             print('without flatten: ',S_local[i].shape)
 #             S_local[i] = S_local[i].flatten().reshape(1,-1)

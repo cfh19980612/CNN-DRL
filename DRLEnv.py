@@ -86,7 +86,6 @@ class FedEnv(gym.Env):
                 for a in parm_local[Name[j]][0::].flatten():
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
-            print(S_local[i].shape)
         # to 1-axis
         S_local = np.array(S_local[1]).flatten()
         

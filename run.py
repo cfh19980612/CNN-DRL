@@ -26,7 +26,7 @@ if __name__ == '__main__':
         else:
             state = env.reset(Tag = False)
         
-        # initialize agent
+        # initialize agent's noise
         agent.reset()
         score = 0
 

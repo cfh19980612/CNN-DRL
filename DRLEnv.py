@@ -89,13 +89,14 @@ class FedEnv(gym.Env):
         S_local = np.array(S_local[self.client - 1]).flatten()
         
         # convert to [num_samples, num_features]
-        S = np.reshape(S_local,(3217226,self.client))
+        S = np.reshape(S_local,(self.client,3217226))
         
         # pca
         state = self.pca.fit_transform(S)
+        state = state.flatten()
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.8)-0.1*t
-
+        
         return t, accuracy, state, reward
 
 
@@ -121,7 +122,7 @@ class FedEnv(gym.Env):
         S_local = np.array(S_local).flatten()
         
         # convert to [num_samples, num_features]
-        S = np.reshape(S_local,(3217226,self.client))
+        S = np.reshape(S_local,(self.client,3217226))
         
         # pca training
         self.pca.fit(S)

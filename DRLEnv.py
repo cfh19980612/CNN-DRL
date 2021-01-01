@@ -101,7 +101,7 @@ class FedEnv(gym.Env):
         parm_local = {}
         Name = []
         S_local = [None for i in range (self.client)]
-        pca = PCA(n_components = 100)
+        
         
         for i in range (self.client):
             S_local[i] = []
@@ -117,14 +117,12 @@ class FedEnv(gym.Env):
         S_local = np.array(S_local[1]).flatten()
 
         S = np.reshape(S_local,(3217226,2))
+        pca = PCA(n_components = 100)
+        pca.fit(S)
+        state = pca.fit_transform(S)
+        print(state)
+        # print(S.shape)
         
-        print(S.shape)
-        pca = None
-        if pca is None:
-            pca = PCA(n_components=100)
-            S = pca.fit_transform(S)
-        else:
-            S = pca.transform(S)
 #             print('without flatten: ',S_local[i].shape)
 #             S_local[i] = S_local[i].flatten().reshape(1,-1)
 #             print('without pca: ',S_local[i].shape)

@@ -72,7 +72,7 @@ class FedEnv(gym.Env):
 
         # PCA
         parm_local = {}
-        S_local = [None for i in range (self.client)
+        S_local = [None for i in range (self.client)]
         
         for i in range (self.client):
             S_local[i] = []

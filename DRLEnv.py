@@ -31,7 +31,7 @@ class FedEnv(gym.Env):
             for j in range (self.client):
                 self.latency[i][j] = random.randint(1,20)
 
-        self.task = cnn(Client = self.client, Dataset = 'CIFAR10', Net = 'MobileNet')    # num of clients, num of neighbors, dataset, network
+        self.task = cnn(Client = self.client, Dataset = 'MNIST', Net = 'MNISTNet')    # num of clients, num of neighbors, dataset, network
         self.Model, self.global_model = self.task.Set_Environment(Client)
 
     

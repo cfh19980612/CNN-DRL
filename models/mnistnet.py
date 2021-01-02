@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 class MNISTNet(nn.Module):
     def __init__(self):
-        super(Net, self).__init__()
+        super(MNISTNet, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)

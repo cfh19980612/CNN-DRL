@@ -89,7 +89,7 @@ class cnn(nn.Module):
             transforms.Normalize((0.1307,), (0.3081,))
             ])
             # download dataset
-            trainset = datasets.MNIST(root = "./data/",
+            trainset = torchvision.datasets.MNIST(root = "./data/",
                             transform=transform,
                             train = True,
                             download = True)
@@ -98,7 +98,7 @@ class cnn(nn.Module):
                                                 batch_size = 64,
                                                 shuffle = True)
 
-            testset = datasets.MNIST(root="./data/",
+            testset = torchvision.datasets.MNIST(root="./data/",
                            transform = transform,
                            train = False)
             

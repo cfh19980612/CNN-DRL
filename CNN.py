@@ -35,7 +35,7 @@ class cnn(nn.Module):
     
     # Preparing data
     def Set_dataset(self):
-        if self.dataset is 'CIFAR10':
+        if self.dataset == 'CIFAR10':
             parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
             parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
@@ -72,20 +72,63 @@ class cnn(nn.Module):
                     'dog', 'frog', 'horse', 'ship', 'truck')
             
             return args, trainloader, testloader
-        else:
-            print ('Dataset error')
-            return 0
+        else if self.dataset == 'MNIST':
+            parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
+            parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+            parser.add_argument('--resume', '-r', action='store_true',
+                                help='resume from checkpoint')
+            args = parser.parse_args()
+            best_acc = 0  # best test accuracy
+            start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
+            # Data
+            print('==> Preparing data..')
+            # normalize
+            transform=transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
+            ])
+            # download dataset
+            trainset = datasets.MNIST(root = "./data/",
+                            transform=transform,
+                            train = True,
+                            download = True)
+            # load dataset with batch=64
+            trainloader = torch.utils.data.DataLoader(dataset=trainset,
+                                                batch_size = 64,
+                                                shuffle = True)
+
+            testset = datasets.MNIST(root="./data/",
+                           transform = transform,
+                           train = False)
+            
+            testloader = torch.utils.data.DataLoader(dataset=testset,
+                                               batch_size = 64,
+                                               shuffle = False)
+            return args, trainloader, testloader
+        else:
+            print ('Data load error!')
+            return 0
     # building models
     def Set_Environment(self, Client):
         print('==> Building model..')
-
-        for i in range (Client):
-            self.Model[i] = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
-            self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+        
+        if self.dataset == 'MNIST':
+            for i in range (Client):
+                self.Model[i] = MNISTNet()
+                self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-        global_model = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
-        return self.Model, global_model
+            global_model = MNISTNet()
+            return self.Model, global_model
+        
+        else if self.dataset == 'CIFAR10':
+            if self.net == 'MobileNet':
+                for i in range (Client):
+                    self.Model[i] = MobileNet()
+                    self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+                                momentum=0.9, weight_decay=5e-4)
+                global_model = MobileNet()
+                return self.Model, global_model
 
     # CNN_train
     def CNN_train(self, epoch, Client):
@@ -102,48 +145,48 @@ class cnn(nn.Module):
      
         
         # each silo owns a complete dataset
-#         for client in range (Client):
-#             self.Model[client].train()
-#             train_loss = 0
-#             correct = 0
-#             total = 0
-#             Loss = 0
-#             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#                 if batch_idx < 251:
-#                     inputs, targets = inputs.to(self.device), targets.to(self.device)
-#                     self.Optimizer[client].zero_grad()
-#                     outputs = self.Model[client](inputs)
-#                     Loss = criterion(outputs, targets)
-#                     Loss.backward()
-#                     self.Optimizer[client].step()
+        for client in range (Client):
+            self.Model[client].train()
+            train_loss = 0
+            correct = 0
+            total = 0
+            Loss = 0
+            for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+                if batch_idx < 251:
+                    inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    self.Optimizer[client].zero_grad()
+                    outputs = self.Model[client](inputs)
+                    Loss = criterion(outputs, targets)
+                    Loss.backward()
+                    self.Optimizer[client].step()
 
-#                     train_loss += Loss.item()
-#                     _, predicted = outputs.max(1)
-#                     total += targets.size(0)
-#                     correct += predicted.eq(targets).sum().item()
+                    train_loss += Loss.item()
+                    _, predicted = outputs.max(1)
+                    total += targets.size(0)
+                    correct += predicted.eq(targets).sum().item()
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
                     
         # share a common dataset  
-        train_loss = [0 for i in range (Client)]
-        correct = [0 for i in range (Client)]
-        total = [0 for i in range (Client)]
-        Loss = [0 for i in range (Client)]
-        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                if batch_idx < 390:
-                    client = batch_idx % Client
-                    self.Model[client].train()
-                    inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    self.Optimizer[client].zero_grad()
-                    outputs = self.Model[client](inputs)
-                    Loss[client] = criterion(outputs, targets)
-                    Loss[client].backward()
-                    self.Optimizer[client].step()
+#         train_loss = [0 for i in range (Client)]
+#         correct = [0 for i in range (Client)]
+#         total = [0 for i in range (Client)]
+#         Loss = [0 for i in range (Client)]
+#         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+#                 if batch_idx < 390:
+#                     client = batch_idx % Client
+#                     self.Model[client].train()
+#                     inputs, targets = inputs.to(self.device), targets.to(self.device)
+#                     self.Optimizer[client].zero_grad()
+#                     outputs = self.Model[client](inputs)
+#                     Loss[client] = criterion(outputs, targets)
+#                     Loss[client].backward()
+#                     self.Optimizer[client].step()
 
-                    train_loss[client] += Loss[client].item()
-                    _, predicted = outputs.max(1)
-                    total[client] += targets.size(0)
-                    correct[client] += predicted.eq(targets).sum().item()
+#                     train_loss[client] += Loss[client].item()
+#                     _, predicted = outputs.max(1)
+#                     total[client] += targets.size(0)
+#                     correct[client] += predicted.eq(targets).sum().item()
 
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))

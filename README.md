@@ -1,4 +1,4 @@
-# Experiment for ICDCS 2021
+# CIFAR10 & CIFAR100 Experiment for ICDCS 2021
 
 `Abstract Submission:` January 9, 2021 (23:59, UTC-5, EST)
 

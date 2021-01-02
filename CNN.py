@@ -72,7 +72,7 @@ class cnn(nn.Module):
                     'dog', 'frog', 'horse', 'ship', 'truck')
             
             return args, trainloader, testloader
-        else if self.dataset == 'MNIST':
+        elif self.dataset == 'MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
             parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
@@ -121,7 +121,7 @@ class cnn(nn.Module):
             global_model = MNISTNet()
             return self.Model, global_model
         
-        else if self.dataset == 'CIFAR10':
+        elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client):
                     self.Model[i] = MobileNet()

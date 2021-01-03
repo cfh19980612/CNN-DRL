@@ -239,7 +239,10 @@ class cnn(nn.Module):
         for key, value in P.items():
             m = 0
             for j in range (Client):
-                P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
+                if i == j:
+                    p[key] = p[key]*(Imp[i,j]/Imp[i].sum())
+                else:
+                    P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
             
         for j in range (Client):
             # if self.G.has_edge(i,j):

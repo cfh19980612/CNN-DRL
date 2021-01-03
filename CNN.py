@@ -240,7 +240,7 @@ class cnn(nn.Module):
             m = 0
             for j in range (Client):
                 if i == j:
-                    p[key] = p[key]*(Imp[i,j]/Imp[i].sum())
+                    P[key] = P[key]*(Imp[i,j]/Imp[i].sum())
                 else:
                     P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
             

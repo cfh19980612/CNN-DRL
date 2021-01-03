@@ -202,22 +202,28 @@ class cnn(nn.Module):
 
     # CNN_test
     def CNN_test(self, epoch, Model):
-        # cpu ? gpu
         Model = Model.to(self.device)
         if self.device == 'cuda':
             Model = torch.nn.DataParallel(Model)
 
-        for batch_idx, (inputs, targets) in enumerate(self.testloader):
-            test_output = Model(inputs)
-            pred_y = torch.max(test_output, 1)[1].data.cpu().numpy()
-            accuracy = float((pred_y == targets.data.numpy()).astype(int).sum()) / float(targets.size(0))
-            # accuracy = Test(epoch,global_model)
-#         print ('\n')
-#         print('Epoch: ', epoch, '| test accuracy: %.2f' % accuracy)
-        # free gpu
+        Model.eval()
+        test_loss = 0
+        correct = 0
+        for data, target in self.testloader:
+            indx_target = target.clone()
+            if self.device == 'cuda':
+                data, target = data.cuda(), target.cuda()
+#             with torch.no_grad(data,target):
+                
+            output = Model(data)
+            test_loss += F.cross_entropy(output, target).data
+            pred = output.data.max(1)[1]  # get the index of the max log-probability
+            correct += pred.cpu().eq(indx_target).sum()
+
+        test_loss = test_loss / len(self.testloader) # average over number of mini-batch
+        accuracy = float(correct / len(self.testloader.dataset))
         if self.device == 'cuda':
             Model.cpu()
-            # torch.cuda.empty_cache()
         return accuracy
 
     # local_aggregate

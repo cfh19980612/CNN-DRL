@@ -244,7 +244,7 @@ class cnn(nn.Module):
 #                     P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
                         P[key] = P[key] + Q[j][key]
                         m += 1
-            P[key] = torch.true_divide(P[key]/m+1)
+            P[key] = torch.true_divide(P[key],m+1)
     
             
         for j in range (Client):

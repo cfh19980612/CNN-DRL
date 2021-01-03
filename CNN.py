@@ -239,7 +239,7 @@ class cnn(nn.Module):
         for key, value in P.items():
             m = 0
             for j in range (Client):
-                if i =! j:
+                if i != j:
                     if Imp[i,j] > 0:
 #                     P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
                         P[key] = P[key] + Q[j][key]

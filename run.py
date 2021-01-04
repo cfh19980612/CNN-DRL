@@ -67,7 +67,7 @@ if __name__ == '__main__':
         # save reward
         dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
-        dataframe.to_csv("/home/ICDCS/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
+        dataframe.to_csv("/home/ICDCS-CIFAR/Reward_data/reward.csv",mode='w',header = False,index=False,sep=',')
         
         if i_episode % print_every == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))

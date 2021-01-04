@@ -272,7 +272,7 @@ class cnn(nn.Module):
     def toCsv(self, times, score):
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe.to_csv('/home/ICDCS/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
+        dataframe.to_csv('/home/ICDCS-CIFAR/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
     
     # return model
     def toModel(self):

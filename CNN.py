@@ -15,6 +15,7 @@ import pandas as pd
 import numpy as np
 from utils import progress_bar
 from models import *
+from multiprocessing import Pool
 
 
 

@@ -44,7 +44,7 @@ class FedEnv(gym.Env):
         Tim, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
 
-        P = self.task.CNN_train(epoch, self.client)
+        P = self.task.CNN_processes(epoch, self.client)
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])

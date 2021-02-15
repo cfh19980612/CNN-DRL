@@ -1,5 +1,5 @@
-import os 
-os.environ['CUDA_ENABLE_DEVICES'] = '0' 
+import os
+os.environ['CUDA_ENABLE_DEVICES'] = '0'
 
 import torch
 import torch.nn as nn
@@ -32,7 +32,6 @@ class cnn(nn.Module):
 
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 
-    
     # Preparing data
     def Set_dataset(self):
         if self.dataset == 'CIFAR10':
@@ -133,13 +132,13 @@ class cnn(nn.Module):
     # CNN training process
     def CNN_train(self, i, criterion):
         self.Model[i] = self.Model[i].to(self.device)
-        
+
         # gpu ?
         if self.device == 'cuda':
             self.Model[i] = torch.nn.DataParallel(self.Model[i])
             cudnn.benchmark = True
         self.Model[i].train()
-        
+
         # training
         train_loss = 0
         correct = 0
@@ -160,6 +159,7 @@ class cnn(nn.Module):
                 correct += predicted.eq(targets).sum().item()
         if self.device == 'cuda':
             self.Model[i].cpu()
+        return Model[i]
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
@@ -167,16 +167,18 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
 
         P = [None for i in range (Client)]
-     
+        q=Queue.Queue() # save the feedback from each process
         # Process pool
         p_pool = Pool(Client)
         for i in range (Client):
-            p_pool.apply_async(func=self.CNN_train, args=(i, criterion))
+            q.put(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
+            Model[i] = q.get()
+
         p_pool.close()
         p_pool.join()
-        
-                    
-        # share a common dataset  
+
+
+        # share a common dataset
 #         train_loss = [0 for i in range (Client)]
 #         correct = [0 for i in range (Client)]
 #         total = [0 for i in range (Client)]
@@ -202,7 +204,7 @@ class cnn(nn.Module):
 
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
-            
+
         return P
 
     # CNN_test
@@ -219,7 +221,7 @@ class cnn(nn.Module):
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
 #             with torch.no_grad(data,target):
-                
+
             output = Model(data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
@@ -235,7 +237,7 @@ class cnn(nn.Module):
     def Local_agg(self, model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
-        # print ('P: ', p)   
+        # print ('P: ', p)
         time = 0
         Q = []
         P = copy.deepcopy(model.state_dict())
@@ -250,8 +252,7 @@ class cnn(nn.Module):
                         P[key] = P[key] + Q[j][key]
                         m += 1
             P[key] = torch.true_divide(P[key],m+1)
-    
-            
+
         for j in range (Client):
             # if self.G.has_edge(i,j):
             time += latency[i][j]

@@ -15,7 +15,7 @@ import numpy as np
 from utils import progress_bar
 from models import *
 from multiprocessing import Pool
-import Queue
+import queue
 
 
 
@@ -168,7 +168,7 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
 
         P = [None for i in range (Client)]
-        q=Queue.Queue() # save the feedback from each process
+        q=queue.Queue() # save the feedback from each process
         # Process pool
         p_pool = Pool(Client)
         for i in range (Client):

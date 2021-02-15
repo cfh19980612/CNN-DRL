@@ -131,7 +131,7 @@ class cnn(nn.Module):
                 return self.Model, global_model
 
     # CNN training process
-    def CNN_train(self, criterion, Model):
+    def CNN_train(self, criterion, Model, i):
         Model = Model.to(self.device)
 
         # gpu ?
@@ -146,7 +146,7 @@ class cnn(nn.Module):
         total = 0
         Loss = 0
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-            if batch_idx % i == 0:
+            if batch_idx % Client == i:
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 self.Optimizer[i].zero_grad()
                 outputs = Model(inputs)
@@ -173,7 +173,7 @@ class cnn(nn.Module):
         # Process pool
         p_pool = Pool(Client)
         for i in range (Client):
-            q.append(p_pool.apply_async(func=self.CNN_train, args=(criterion, self.Model[i])))
+            q.append(p_pool.apply_async(func=self.CNN_train, args=(criterion, self.Model[i], i)))
 
         p_pool.close()
         p_pool.join()

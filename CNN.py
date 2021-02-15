@@ -7,7 +7,6 @@ import torch.nn.functional as F
 import torch.backends.cudnn as cudnn
 import torchvision
 import torchvision.transforms as transforms
-import networkx as nx
 import random
 import argparse
 import copy
@@ -123,7 +122,7 @@ class cnn(nn.Module):
             return self.Model, global_model
         
         elif self.dataset == 'CIFAR10':
-            if self.net == 'MobileNet':
+            if self.net == 'MobileNet':conda install pytorch torchvision torchaudio cudatoolkit=11.0 -c pytorch
                 for i in range (Client):
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,

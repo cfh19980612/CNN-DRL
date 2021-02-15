@@ -15,7 +15,7 @@ import numpy as np
 from utils import progress_bar
 from models import *
 from multiprocessing import Pool
-import queue
+import Queue
 
 
 
@@ -173,7 +173,7 @@ class cnn(nn.Module):
         p_pool = Pool(Client)
         for i in range (Client):
             q.put(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
-            Model[i] = q.get()
+            self.Model[i] = q.get()
 
         p_pool.close()
         p_pool.join()

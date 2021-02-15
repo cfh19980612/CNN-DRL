@@ -160,7 +160,7 @@ class cnn(nn.Module):
                 correct += predicted.eq(targets).sum().item()
         if self.device == 'cuda':
             self.Model[i].cpu()
-        return Model[i]
+        return Model[i].state_dict()
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):

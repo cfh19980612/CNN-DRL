@@ -168,15 +168,16 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
 
         P = [None for i in range (Client)]
-        q=queue.Queue() # save the feedback from each process
+        q=[] # save the feedback from each process
         # Process pool
         p_pool = Pool(Client)
         for i in range (Client):
-            q.put(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
-            self.Model[i].load_state_dict(q.get())
+            q.append(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
 
         p_pool.close()
         p_pool.join()
+        for i in range (Client):
+            self.Model[i].load_state_dict(q[i])
 
 
         # share a common dataset

@@ -173,7 +173,7 @@ class cnn(nn.Module):
         p_pool = Pool(Client)
         for i in range (Client):
             q.put(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
-            self.Model[i] = q.get()
+            self.Model[i].load_state_dict(q.get())
 
         p_pool.close()
         p_pool.join()

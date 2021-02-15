@@ -146,18 +146,18 @@ class cnn(nn.Module):
         total = 0
         Loss = 0
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#             if batch_idx % i == 0:
-            inputs, targets = inputs.to(self.device), targets.to(self.device)
-            self.Optimizer[i].zero_grad()
-            outputs = self.Model[i](inputs)
-            Loss = criterion(outputs, targets)
-            Loss.backward()
-            self.Optimizer[i].step()
+            if batch_idx % i == 0:
+                inputs, targets = inputs.to(self.device), targets.to(self.device)
+                self.Optimizer[i].zero_grad()
+                outputs = self.Model[i](inputs)
+                Loss = criterion(outputs, targets)
+                Loss.backward()
+                self.Optimizer[i].step()
 
-            train_loss += Loss.item()
-            _, predicted = outputs.max(1)
-            total += targets.size(0)
-            correct += predicted.eq(targets).sum().item()
+                train_loss += Loss.item()
+                _, predicted = outputs.max(1)
+                total += targets.size(0)
+                correct += predicted.eq(targets).sum().item()
         if self.device == 'cuda':
             self.Model[i].cpu()
 

@@ -131,14 +131,14 @@ class cnn(nn.Module):
                 return self.Model, global_model
 
     # CNN training process
-    def CNN_train(self, i, criterion):
-        self.Model[i] = self.Model[i].to(self.device)
+    def CNN_train(self, criterion, Model):
+        Model = Model.to(self.device)
 
         # gpu ?
         if self.device == 'cuda':
-            self.Model[i] = torch.nn.DataParallel(self.Model[i])
+            Model = torch.nn.DataParallel(Model)
             cudnn.benchmark = True
-        self.Model[i].train()
+        Model.train()
 
         # training
         train_loss = 0
@@ -149,7 +149,7 @@ class cnn(nn.Module):
             if batch_idx % i == 0:
                 inputs, targets = inputs.to(self.device), targets.to(self.device)
                 self.Optimizer[i].zero_grad()
-                outputs = self.Model[i](inputs)
+                outputs = Model(inputs)
                 Loss = criterion(outputs, targets)
                 Loss.backward()
                 self.Optimizer[i].step()
@@ -159,8 +159,9 @@ class cnn(nn.Module):
                 total += targets.size(0)
                 correct += predicted.eq(targets).sum().item()
         if self.device == 'cuda':
-            self.Model[i].cpu()
-        return Model[i].state_dict()
+            Model.cpu()
+        result = copy.deepcopy(Model.state_dict())
+        return result
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
@@ -172,7 +173,7 @@ class cnn(nn.Module):
         # Process pool
         p_pool = Pool(Client)
         for i in range (Client):
-            q.append(p_pool.apply_async(func=self.CNN_train, args=(i, criterion)))
+            q.append(p_pool.apply_async(func=self.CNN_train, args=(criterion, self.Model[i])))
 
         p_pool.close()
         p_pool.join()

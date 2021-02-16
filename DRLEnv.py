@@ -132,7 +132,7 @@ class FedEnv(gym.Env):
         elif self.dataset == 'CIFAR10':
             for i in range (Client):
                 Model[i] = MobileNet()
-                Optimizer[i] = torch.optim.SGD(Model[i+1].parameters(), lr=self.args.lr,
+                Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,
                             momentum=0.9, weight_decay=5e-4)
             global_model = MobileNet()
             return Model, global_model, Optimizer

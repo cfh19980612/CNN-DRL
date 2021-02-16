@@ -41,7 +41,7 @@ class cnn(nn.Module):
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(trainloader):
-                if batch_idx < 10:
+                if batch_idx < 360:
                     client = (batch_idx % Client)
                     Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)

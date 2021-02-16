@@ -162,7 +162,6 @@ class cnn(nn.Module):
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client):
-                    print ('hello')
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
@@ -196,41 +195,35 @@ class cnn(nn.Module):
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
+        P = [None for i in range (Client)]
         # loss func
         criterion = nn.CrossEntropyLoss()
 
-        self.args.distributed = args.world_size > 1
-
-        if self.args.distributed:
-            dist.init_process_group(backend=args.dist_backend, init_method=args.dist_url,world_size=args.world_size,rank=args.dist_rank)
-
-
         # share a common dataset
-#         train_loss = [0 for i in range (Client)]
-#         correct = [0 for i in range (Client)]
-#         total = [0 for i in range (Client)]
-#         Loss = [0 for i in range (Client)]
-#         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#                 if batch_idx < 390:
-#                     client = batch_idx % Client
-#                     self.Model[client].train()
-#                     inputs, targets = inputs.to(self.device), targets.to(self.device)
-#                     self.Optimizer[client].zero_grad()
-#                     outputs = self.Model[client](inputs)
-#                     Loss[client] = criterion(outputs, targets)
-#                     Loss[client].backward()
-#                     self.Optimizer[client].step()
+        train_loss = [0 for i in range (Client)]
+        correct = [0 for i in range (Client)]
+        total = [0 for i in range (Client)]
+        Loss = [0 for i in range (Client)]
+        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+                if batch_idx < 390:
+                    client = batch_idx % Client
+                    self.Model[client].train()
+                    inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    self.Optimizer[client].zero_grad()
+                    outputs = self.Model[client](inputs)
+                    Loss[client] = criterion(outputs, targets)
+                    Loss[client].backward()
+                    self.Optimizer[client].step()
 
-#                     train_loss[client] += Loss[client].item()
-#                     _, predicted = outputs.max(1)
-#                     total[client] += targets.size(0)
-#                     correct[client] += predicted.eq(targets).sum().item()
+                    train_loss[client] += Loss[client].item()
+                    _, predicted = outputs.max(1)
+                    total[client] += targets.size(0)
+                    correct[client] += predicted.eq(targets).sum().item()
 
-#                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-#                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
-        criterion = nn.CrossEntropyLoss()
-        self.CNN_train(criterion, Client)
-        P = [None for i in range (Client)]
+                    progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+                                % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
+        # criterion = nn.CrossEntropyLoss()
+        # self.CNN_train(criterion, Client)
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
         return P

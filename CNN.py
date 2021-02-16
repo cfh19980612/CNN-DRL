@@ -61,7 +61,7 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
 
         # cpu ? gpu
-        for i in range(Client):
+        for i in range(client):
             Model[i] = self.Model[i].to(self.device)
         P = [None for i in range (Client)]
 

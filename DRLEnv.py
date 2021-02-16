@@ -102,7 +102,7 @@ class FedEnv(gym.Env):
 
 
     def reset(self, Tag):
-        self.Model = self.task.Set_Environment(self.client)
+        # self.Model = self.task.returnModel(self.client)
         # PCA
         parm_local = {}
         S_local = [None for i in range (self.client)]

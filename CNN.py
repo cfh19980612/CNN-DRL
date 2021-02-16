@@ -211,11 +211,11 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
-                    client = (batch_idx % Client)+1
-                    self.Model[client].train()
+                    client = (batch_idx % Client)
+                    self.Model[client+1].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     self.Optimizer[client].zero_grad()
-                    outputs = self.Model[client](inputs)
+                    outputs = self.Model[client+1](inputs)
                     Loss[client] = criterion(outputs, targets)
                     Loss[client].backward()
                     self.Optimizer[client].step()

@@ -99,7 +99,6 @@ class FedEnv(gym.Env):
 
 
     def reset(self, Tag):
-        print ('start pca reset')
         self.Model, global_model = self.task.Set_Environment(self.client)
         # PCA
         parm_local = {}

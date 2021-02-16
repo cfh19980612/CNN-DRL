@@ -10,7 +10,6 @@ if __name__ == '__main__':
     print (torch.cuda.is_available())
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 2)  # env
-    print ('yes')
     agent = Agent(state_size=100, action_size=100, random_seed=2)  # agent
     scores_deque = deque(maxlen=print_every)
     scores = []
@@ -24,10 +23,8 @@ if __name__ == '__main__':
             state = env.reset(Tag = True)
         else:
             state = env.reset(Tag = False)
-        print ('PCA reset complete !')
         # initialize agent's noise
         agent.reset()
-        print ('Agent reset complete !')
         score = 0
 
 

@@ -205,7 +205,7 @@ class cnn(nn.Module):
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                if batch_idx < 390:
+                if batch_idx < 10:
                     client = batch_idx % Client
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
@@ -219,13 +219,10 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
-
-                    progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-                                % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
         # criterion = nn.CrossEntropyLoss()
         # self.CNN_train(criterion, Client)
         for i in range (Client):
-            P[i] = copy.deepcopy(self.Model[i].state_dict())
+            P[i] = self.Model[i].state_dict()
         return P
 
     # CNN_test

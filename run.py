@@ -14,9 +14,7 @@ if __name__ == '__main__':
     scores_deque = deque(maxlen=print_every)
     scores = []
     episode = []
-    
-    
-    
+
     for i_episode in range(1, 200+1):
         X, Y = [], []  # x and y axis for test_data
         start_time = 0
@@ -25,35 +23,32 @@ if __name__ == '__main__':
             state = env.reset(Tag = True)
         else:
             state = env.reset(Tag = False)
-        
+
         # initialize agent's noise
         agent.reset()
         score = 0
 
-                    
+
         reward_y = []
         episode_x = []
         pbar = tqdm(range(100))
-                    
+
         for i in pbar:
             action = agent.act(state)
             time, accuracy, next_state, reward = env.step(action,i)
-            
             # save accuracy
             start_time += time
             X.append(start_time)
             Y.append(accuracy)
-            
             agent.step(state, action, reward, next_state)
             state = next_state
             score += reward
-                    
-                    
+
             # end?
             if accuracy >= 0.8:
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f Reward: %.3f" %(i, accuracy,reward))
-        
+
         # save accuracy
         env.save_acc(X,Y)
         

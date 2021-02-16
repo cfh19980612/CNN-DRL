@@ -16,7 +16,6 @@ from utils import progress_bar
 from models import *
 from multiprocessing import Pool
 import queue
-import torch.true_divide
 
 import syft as sy  # <-- NEW: import the Pysyft library
 hook = sy.TorchHook(torch)  # <-- NEW: hook PyTorch ie add extra functionalities to support Federated Learning

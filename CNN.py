@@ -198,9 +198,9 @@ class cnn(nn.Module):
         # cpu ? gpu
         for i in range(Client):
             self.Model[i] = self.Model[i].to(self.device)
-                if self.device == 'cuda':
-                    self.Model[i] = torch.nn.DataParallel(self.Model[i])
-                    cudnn.benchmark = True
+            if self.device == 'cuda':
+                self.Model[i] = torch.nn.DataParallel(self.Model[i])
+                cudnn.benchmark = True
 
         P = [None for i in range (Client)]
         # loss func

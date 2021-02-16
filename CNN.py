@@ -17,24 +17,6 @@ from models import *
 from multiprocessing import Pool
 import queue
 
-import syft as sy  # <-- NEW: import the Pysyft library
-hook = sy.TorchHook(torch)  # <-- NEW: hook PyTorch ie add extra functionalities to support Federated Learning
-worker = []
-for i in range(10):
-    worker.append(sy.VirtualWorker(hook, id="worker"+str(i)))
-# worker0 = sy.VirtualWorker(hook, id="worker0")
-# worker1 = sy.VirtualWorker(hook, id="worker1")  # <-- NEW: define remote worker bob
-# worker2 = sy.VirtualWorker(hook, id="worker2")  # <-- NEW: and alice
-# worker3 = sy.VirtualWorker(hook, id="worker3")
-# worker4 = sy.VirtualWorker(hook, id="worker4")
-# worker5 = sy.VirtualWorker(hook, id="worker5")
-# worker6 = sy.VirtualWorker(hook, id="worker6")
-# worker7 = sy.VirtualWorker(hook, id="worker7")
-# worker8 = sy.VirtualWorker(hook, id="worker8")
-# worker9 = sy.VirtualWorker(hook, id="worker9")
-
-
-
 class cnn(nn.Module):
     def __init__(self, Client, Dataset, Net):
         self.p = 0.5
@@ -42,8 +24,6 @@ class cnn(nn.Module):
         self.net = Net
         # self.device = 'cpu'
         self.args, self.trainloader, self.testloader = self.Set_dataset()
-
-        self.Model, self.Optimizer = self.Set_Environment(Client)
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -53,101 +33,6 @@ class cnn(nn.Module):
             P.append(self.Model[i+1])
         return P
 
-    # Preparing data
-    def Set_dataset(self):
-        if self.dataset == 'CIFAR10':
-            parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
-            parser.add_argument('--resume', '-r', action='store_true',
-                                help='resume from checkpoint')
-            args = parser.parse_args()
-            best_acc = 0  # best test accuracy
-            start_epoch = 0  # start from epoch 0 or last checkpoint epoch
-
-            # Data
-            print('==> Preparing data..')
-            transform_train = transforms.Compose([
-                transforms.RandomCrop(32, padding=4),
-                transforms.RandomHorizontalFlip(),
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
-
-            transform_test = transforms.Compose([
-                transforms.ToTensor(),
-                transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
-            ])
-
-            trainset = torchvision.datasets.CIFAR10(
-                root='/home/ICDCS/cifar-10-batches-py/', train=True, download=True, transform=transform_train)
-            trainloader = torch.utils.data.DataLoader(
-                trainset, batch_size=128, shuffle=True, num_workers=2)
-
-            testset = torchvision.datasets.CIFAR10(
-                root='/home/ICDCS/cifar-10-batches-py/', train=False, download=True, transform=transform_test)
-            testloader = torch.utils.data.DataLoader(
-                testset, batch_size=100, shuffle=False, num_workers=2)
-
-            classes = ('plane', 'car', 'bird', 'cat', 'deer',
-                    'dog', 'frog', 'horse', 'ship', 'truck')
-
-            return args, trainloader, testloader
-        elif self.dataset == 'MNIST':
-            parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
-            parser.add_argument('--resume', '-r', action='store_true',
-                                help='resume from checkpoint')
-            args = parser.parse_args()
-            best_acc = 0  # best test accuracy
-            start_epoch = 0  # start from epoch 0 or last checkpoint epoch
-
-            # Data
-            print('==> Preparing data..')
-            # normalize
-            transform=transforms.Compose([
-            transforms.ToTensor(),
-            transforms.Normalize((0.1307,), (0.3081,))
-            ])
-            # download dataset
-            trainset = torchvision.datasets.MNIST(root = "./data/",
-                            transform=transform,
-                            train = True,
-                            download = True)
-            # load dataset with batch=64
-            trainloader = torch.utils.data.DataLoader(dataset=trainset,
-                                                batch_size = 64,
-                                                shuffle = True)
-
-            testset = torchvision.datasets.MNIST(root="./data/",
-                           transform = transform,
-                           train = False)
-
-            testloader = torch.utils.data.DataLoader(dataset=testset,
-                                               batch_size = 64,
-                                               shuffle = False)
-            return args, trainloader, testloader
-        else:
-            print ('Data load error!')
-            return 0
-    # building models
-    def Set_Environment(self, Client):
-        print('==> Building model..')
-        Model = [None for i in range (Client+1)]
-        Optimizer = [None for i in range (Client)]
-        if self.dataset == 'MNIST':
-            for i in range (Client):
-                Model[i] = MNISTNet()
-                Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,
-                                momentum=0.9, weight_decay=5e-4)
-            return Model, Optimizer
-        elif self.dataset == 'CIFAR10':
-            if self.net == 'MobileNet':
-                for i in range (Client+1):
-                    Model[i] = MobileNet()
-                for i in range (Client):
-                    Optimizer[i] = torch.optim.SGD(Model[i+1].parameters(), lr=self.args.lr,
-                                momentum=0.9, weight_decay=5e-4)
-                return Model, Optimizer
     # CNN training process
 #     def CNN_train(self, i, criterion):
 #         self.Model[i] = self.Model[i].to(self.device)
@@ -179,13 +64,13 @@ class cnn(nn.Module):
 
 
     # multiple processes to train CNN models
-    def CNN_processes(self, epoch, Client):
+    def CNN_processes(self, Model, Optimization, client, trainloader):
         # loss func
         criterion = nn.CrossEntropyLoss()
 
         # cpu ? gpu
         for i in range(Client):
-            self.Model[i+1] = self.Model[i+1].to(self.device)
+            Model[i] = self.Model[i].to(self.device)
         P = [None for i in range (Client)]
 
 #         # each silo owns a complete dataset
@@ -214,16 +99,16 @@ class cnn(nn.Module):
         correct = [0 for i in range (Client)]
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
-        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+        for batch_idx, (inputs, targets) in enumerate(trainloader):
                 if batch_idx < 10:
                     client = (batch_idx % Client)
-                    self.Model[client+1].train()
+                    Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    self.Optimizer[client].zero_grad()
-                    outputs = self.Model[client+1](inputs)
+                    Optimizer[client].zero_grad()
+                    outputs = Model[client](inputs)
                     Loss[client] = criterion(outputs, targets)
                     Loss[client].backward()
-                    self.Optimizer[client].step()
+                    Optimizer[client].step()
 
                     train_loss[client] += Loss[client].item()
                     _, predicted = outputs.max(1)
@@ -235,19 +120,18 @@ class cnn(nn.Module):
 
         if self.device == 'cuda':
             for i in range (Client):
-                self.Model[i+1].cpu()
+                Model[i].cpu()
         for i in range (Client):
-            P[i] = copy.deepcopy(self.Model[i+1].state_dict())
+            P[i] = copy.deepcopy(Model[i].state_dict())
 
         return P
 
     # CNN_test
-    def CNN_test(self, model):
+    def CNN_test(self, model, testloader):
         # cpu ? gpu
-        self.Model[0].load_state_dict(model.state_dict())
-        self.Model[0].to(self.device)
+        model = model.to(self.device)
 
-        self.Model[0].eval()
+        model.eval()
         test_loss = 0
         correct = 0
         for data, target in self.testloader:
@@ -256,19 +140,19 @@ class cnn(nn.Module):
                 data, target = data.cuda(), target.cuda()
 #             with torch.no_grad(data,target):
 
-            output = self.Model[0](data)
+            output = model(data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
             correct += pred.cpu().eq(indx_target).sum()
 
-        test_loss = test_loss / len(self.testloader) # average over number of mini-batch
-        accuracy = float(correct / len(self.testloader.dataset))
+        test_loss = test_loss / len(testloader) # average over number of mini-batch
+        accuracy = float(correct / len(testloader.dataset))
         if self.device == 'cuda':
-            self.Model[0].cpu()
+            model.cpu()
         return accuracy
 
     # local_aggregate
-    def Local_agg(self, model, i, Client, Imp, latency):
+    def Local_agg(self, Model, model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
         # print ('P: ', p)
@@ -276,7 +160,7 @@ class cnn(nn.Module):
         Q = []
         P = copy.deepcopy(model.state_dict())
         for j in range (Client):
-            Q.append(copy.deepcopy(self.Model[j].state_dict()))
+            Q.append(copy.deepcopy(Model[j].state_dict()))
         for key, value in P.items():
             m = 0
             for j in range (Client):

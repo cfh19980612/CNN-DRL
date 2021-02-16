@@ -195,6 +195,13 @@ class cnn(nn.Module):
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
+        # cpu ? gpu
+        for i in range(Client):
+            self.Model[i] = self.Model[i].to(self.device)
+                if self.device == 'cuda':
+                    self.Model[i] = torch.nn.DataParallel(self.Model[i])
+                    cudnn.benchmark = True
+
         P = [None for i in range (Client)]
         # loss func
         criterion = nn.CrossEntropyLoss()
@@ -206,7 +213,6 @@ class cnn(nn.Module):
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
                     client = batch_idx % Client
-                    self.Model[client] = self.Model[client].to(self.device)
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     self.Optimizer[client].zero_grad()
@@ -219,8 +225,9 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
-                    if self.device == 'cuda':
-                        self.Model[client].cpu()
+        if self.device == 'cuda':
+            for i in range (Client):
+                self.Model[i].cpu()
         # criterion = nn.CrossEntropyLoss()
         # self.CNN_train(criterion, Client)
         for i in range (Client):

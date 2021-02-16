@@ -45,7 +45,7 @@ class cnn(nn.Module):
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
-        self.global_model = None
+        self.global_model = MobileNet()
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 
 
@@ -142,7 +142,6 @@ class cnn(nn.Module):
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-                self.global_model = MobileNet()
                 return self.Model, self.global_model
     # CNN training process
 #     def CNN_train(self, i, criterion):

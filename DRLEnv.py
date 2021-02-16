@@ -32,7 +32,7 @@ class FedEnv(gym.Env):
                 self.latency[i][j] = random.randint(1,20)
 
         self.task = cnn(Client = self.client, Dataset = 'CIFAR10', Net = 'MobileNet')    # num of clients, num of neighbors, dataset, network
-        self.Model = self.task.Set_Environment(Client)
+        self.Model = self.task.returnModel(Client)
 
 
     def step(self, action, epoch):

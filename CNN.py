@@ -47,6 +47,11 @@ class cnn(nn.Module):
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
+    def returnModel(self, Client):
+        P = []
+        for i in range (Client):
+            P.append(self.Model[i+1].state_dict())
+        return P
 
     # Preparing data
     def Set_dataset(self):

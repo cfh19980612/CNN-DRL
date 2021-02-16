@@ -25,36 +25,6 @@ class cnn(nn.Module):
             P.append(self.Model[i+1])
         return P
 
-    # CNN training process
-#     def CNN_train(self, i, criterion):
-#         self.Model[i] = self.Model[i].to(self.device)
-#         # gpu ?
-#         if self.device == 'cuda':
-#             self.Model[i] = torch.nn.DataParallel(self.Model[i])
-#             cudnn.benchmark = True
-#         self.Model[i].train()
-
-#         # training
-#         train_loss = 0
-#         correct = 0
-#         total = 0
-#         Loss = 0
-#         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#             inputs, targets = inputs.to(self.device), targets.to(self.device)
-#             self.Optimizer[i].zero_grad()
-#             outputs = self.Model[i](inputs)
-#             Loss = criterion(outputs, targets)
-#             Loss.backward()
-#             self.Optimizer[i].step()
-
-#             train_loss += Loss.item()
-#             _, predicted = outputs.max(1)
-#             total += targets.size(0)
-#             correct += predicted.eq(targets).sum().item()
-#         if self.device == 'cuda':
-#             self.Model[i].cpu()
-
-
     # multiple processes to train CNN models
     def CNN_processes(self, Model, Optimizer, Client, trainloader):
         # loss func
@@ -65,27 +35,6 @@ class cnn(nn.Module):
             Model[i] = Model[i].to(self.device)
         P = [None for i in range (Client)]
 
-#         # each silo owns a complete dataset
-#         for client in range (Client):
-#             self.Model[client].train()
-#             train_loss = 0
-#             correct = 0
-#             total = 0
-#             Loss = 0
-#             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-#                 inputs, targets = inputs.to(self.device), targets.to(self.device)
-#                 self.Optimizer[client].zero_grad()
-#                 outputs = self.Model[client](inputs)
-#                 Loss = criterion(outputs, targets)
-#                 Loss.backward()
-#                 self.Optimizer[client].step()
-
-#                 train_loss += Loss.item()
-#                 _, predicted = outputs.max(1)
-#                 total += targets.size(0)
-#                 correct += predicted.eq(targets).sum().item()
-#                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-#                                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
         # share a common dataset
         train_loss = [0 for i in range (Client)]
         correct = [0 for i in range (Client)]
@@ -126,7 +75,7 @@ class cnn(nn.Module):
         model.eval()
         test_loss = 0
         correct = 0
-        for data, target in self.testloader:
+        for data, target in testloader:
             indx_target = target.clone()
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
@@ -190,55 +139,3 @@ class cnn(nn.Module):
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
         dataframe.to_csv('/home/CIFAR10/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
-
-    # # return model
-    # def toModel(self):
-    #     return self.Model
-
-
-    # def forward(self, epoches, Client):
-    #     times, score = [], []
-    #     t = 0
-    #     args, trainloader, testloader = self.Set_dataset()
-    #     self.Set_Environment(args)
-
-    #     global_model = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
-
-    #     # GAT network
-    #     net = GATLayer(self.g,in_dim = 864,out_dim = 20)
-
-    #     for epoch in range(0, epoches):
-
-    #         Tim, Loss = [], []
-    #         # Loss = [0 for i in range (Client)]
-
-    #         P = self.CNN_train(epoch,trainloader)
-
-    #         for i in range (Client):
-    #             self.Model[i].load_state_dict(P[i])
-
-    #         # global model
-    #         # global_model = self.Global_agg()
-
-    #         accuracy = self.CNN_test(epoch,self.Model[0],testloader)
-
-    #         score.append(accuracy)
-
-    #         # aggregate local model
-    #         # Step 1: calculate the weight for each neighborhood
-    #         net.update_graph(self.Model, Client)
-    #         net.forward()
-    #         # Step 2: aggregate the model from neighborhood
-    #         for i in range (5):
-    #             P_new = [None for m in range (Client)]
-    #             for x in range (Client):
-    #                 P_new[x], temp = self.Local_agg(self.Model[x],x)
-    #                 Tim.append(temp)
-    #         # update
-    #         for client in range (Client):
-    #             self.Model[client].load_state_dict(P_new[client])
-
-    #         times, t = self.step_time(times, Tim, t)
-
-
-    #         self.toCsv(times,score)

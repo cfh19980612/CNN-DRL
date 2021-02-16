@@ -40,8 +40,7 @@ class cnn(nn.Module):
         self.p = 0.5
         self.dataset = Dataset
         self.net = Net
-        self.Model = self.Set_Environment(Client)
-        self.Optimizer = [None for i in range (Client)]
+        self.Model, self.Optimizer = self.Set_Environment(Client)
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
@@ -127,22 +126,22 @@ class cnn(nn.Module):
     # building models
     def Set_Environment(self, Client):
         print('==> Building model..')
-
+        Model = [None for i in range (Client+1)]
+        Optimizer = [None for i in range (Client)]
         if self.dataset == 'MNIST':
             for i in range (Client):
-                self.Model[i] = MNISTNet()
-                self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+                Model[i] = MNISTNet()
+                Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-            self.global_model = MNISTNet()
-            return self.Model, self.global_model
+            return Model, Optimizer
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client+1):
-                    self.Model[i] = MobileNet()
+                    Model[i] = MobileNet()
                 for i in range (Client):
-                    self.Optimizer[i] = torch.optim.SGD(self.Model[i+1].parameters(), lr=self.args.lr,
+                    Optimizer[i] = torch.optim.SGD(Model[i+1].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-                return self.Model
+                return Model, Optimizer
     # CNN training process
 #     def CNN_train(self, i, criterion):
 #         self.Model[i] = self.Model[i].to(self.device)

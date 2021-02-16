@@ -232,9 +232,9 @@ class cnn(nn.Module):
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i+1].state_dict())
 
-#         if self.device == 'cuda':
-#             for i in range (Client):
-#                 self.Model[i].cpu()
+        if self.device == 'cuda':
+            for i in range (Client):
+                self.Model[i].cpu()
         return P
 
     # CNN_test
@@ -281,7 +281,8 @@ class cnn(nn.Module):
 #                     P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
                         P[key] = P[key] + Q[j][key]
                         m += 1
-            P[key] = torch.true_divide(P[key],m+1)
+            # P[key] = torch.true_divide(P[key],m+1)
+            P[key] = P[key]/m+1
 
         for j in range (Client):
             # if self.G.has_edge(i,j):

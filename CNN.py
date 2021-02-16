@@ -203,6 +203,7 @@ class cnn(nn.Module):
         correct = [0 for i in range (Client)]
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
+        print ('hello 0')
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
                     print ('hello 1')

@@ -134,16 +134,16 @@ class cnn(nn.Module):
                 self.Model[i] = MNISTNet()
                 self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-            global_model = MNISTNet()
-            return self.Model, global_model
+            self.global_model = MNISTNet()
+            return self.Model, self.global_model
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client):
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-                global_model = MobileNet()
-                return self.Model, global_model
+                self.global_model = MobileNet()
+                return self.Model, self.global_model
     # CNN training process
 #     def CNN_train(self, i, criterion):
 #         self.Model[i] = self.Model[i].to(self.device)

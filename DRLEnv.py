@@ -8,6 +8,9 @@ import argparse
 from sklearn.decomposition import PCA
 from models import *
 
+import torch
+import torchvision.transforms as transforms
+
 class FedEnv(gym.Env):
     metadata = {
         'render.modes': ['human', 'rgb_array'],

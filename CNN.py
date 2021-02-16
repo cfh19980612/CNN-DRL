@@ -198,7 +198,6 @@ class cnn(nn.Module):
         P = [None for i in range (Client)]
         # loss func
         criterion = nn.CrossEntropyLoss()
-
         # share a common dataset
         train_loss = [0 for i in range (Client)]
         correct = [0 for i in range (Client)]
@@ -207,6 +206,7 @@ class cnn(nn.Module):
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
                     client = batch_idx % Client
+                    self.Model[client] = self.Model[client].to(device)
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     self.Optimizer[client].zero_grad()
@@ -219,6 +219,8 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
+                    if self.device == 'cuda':
+                        self.Model[client].cpu()
         # criterion = nn.CrossEntropyLoss()
         # self.CNN_train(criterion, Client)
         for i in range (Client):

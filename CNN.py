@@ -20,7 +20,7 @@ import queue
 import syft as sy  # <-- NEW: import the Pysyft library
 hook = sy.TorchHook(torch)  # <-- NEW: hook PyTorch ie add extra functionalities to support Federated Learning
 worker = []
-for i in range(Client = 10):
+for i in range(10):
     worker.append(sy.VirtualWorker(hook, id="worker"+i))
 # worker0 = sy.VirtualWorker(hook, id="worker0")
 # worker1 = sy.VirtualWorker(hook, id="worker1")  # <-- NEW: define remote worker bob

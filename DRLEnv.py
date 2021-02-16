@@ -148,16 +148,14 @@ class FedEnv(gym.Env):
         # Loss = [0 for i in range (Client)]
 
         P = self.task.CNN_processes(self.Model, self.Optimizer, self.client, self.trainloader)
-        print (type(P[0]))
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
-        print (type(self.Model[1]))
 
         # global model
         # self.global_model.load_state_dict(self.task.Global_agg(self.client))
 
-        accuracy = self.task.CNN_test(self.Model[0])
+        accuracy = self.task.CNN_test(self.Model[0],self.testloader)
 
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood

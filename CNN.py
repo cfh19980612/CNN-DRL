@@ -225,11 +225,9 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
-        if self.device == 'cuda':
-            for i in range (Client):
-                self.Model[i].cpu()
-        # criterion = nn.CrossEntropyLoss()
-        # self.CNN_train(criterion, Client)
+        # if self.device == 'cuda':
+        #     for i in range (Client):
+        #         self.Model[i].cpu()
         for i in range (Client):
             P[i] = self.Model[i].state_dict()
         return P

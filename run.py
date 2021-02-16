@@ -8,6 +8,8 @@ from collections import deque
 
 if __name__ == '__main__':
     print (torch.cuda.is_available())
+    str = '/home'+1+'.csv'
+    print (str)
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 2, dataset = 'CIFAR10', net = 'MobileNet')  # env
     agent = Agent(state_size=100, action_size=100, random_seed=2)  # agent
@@ -34,7 +36,7 @@ if __name__ == '__main__':
 
         for i in pbar:
             action = agent.act(state)
-            time, accuracy, next_state, reward = env.step(action,i)
+            time, accuracy, test_loss, next_state, reward = env.step(action,i)
             # save accuracy
             start_time += time
             X.append(start_time)
@@ -46,10 +48,10 @@ if __name__ == '__main__':
             # end?
             if accuracy >= 0.95:
                 break
-            pbar.set_description("Epoch: %d Accuracy: %.3f Reward: %.3f" %(i, accuracy,reward))
+            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Reward: %.3f" %(i, accuracy, test_loss, reward))
 
         # save accuracy
-        env.save_acc(X,Y)
+        env.save_acc(X,Y,i_episode)
         
         scores_deque.append(score)
         scores.append(score)

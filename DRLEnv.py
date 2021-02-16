@@ -155,7 +155,7 @@ class FedEnv(gym.Env):
         # global model
         # self.global_model.load_state_dict(self.task.Global_agg(self.client))
 
-        accuracy = self.task.CNN_test(self.Model[0],self.testloader)
+        accuracy, test_loss = self.task.CNN_test(self.Model[0],self.testloader)
 
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood
@@ -198,7 +198,7 @@ class FedEnv(gym.Env):
         state = state.flatten()
         # self.toCsv(times,score)
         reward = pow(64, accuracy-0.85)-1
-        return t, accuracy, state, reward
+        return t, accuracy, test_loss, state, reward
 
 
 
@@ -240,8 +240,8 @@ class FedEnv(gym.Env):
 
         return state
     
-    def save_acc(self, X, Y):
-        self.task.toCsv(X,Y)
+    def save_acc(self, X, Y, i_episode):
+        self.task.toCsv(X,Y,i_episode)
 
     def render(self, mode='human'):
         return None

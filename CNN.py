@@ -28,7 +28,7 @@ class cnn(nn.Module):
     # multiple processes to train CNN models
     def CNN_processes(self, Model, Optimizer, Client, trainloader):
         # loss func
-        criterion = nn.CrossEntropyLoss()
+        criterion = nn.CrossEntropyLoss().to(self.device)
 
         # cpu ? gpu
         for i in range(Client):
@@ -90,7 +90,7 @@ class cnn(nn.Module):
         accuracy = float(correct / len(testloader.dataset))
         if self.device == 'cuda':
             model.cpu()
-        return accuracy
+        return accuracy, test_loss
 
     # local_aggregate
     def Local_agg(self, Model, i, Client, Imp, latency):
@@ -135,7 +135,8 @@ class cnn(nn.Module):
         return time
 
     # to CSV
-    def toCsv(self, times, score):
+    def toCsv(self, times, score, i_episode):
+        str = '/home/CIFAR10/Test_data/test' + i_episode + '.csv'
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe.to_csv('/home/CIFAR10/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
+        dataframe.to_csv(str,mode = 'w', header = False,index=False,sep=',')

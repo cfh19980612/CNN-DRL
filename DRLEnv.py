@@ -45,10 +45,11 @@ class FedEnv(gym.Env):
 
         P = self.task.CNN_processes(epoch, self.client)
         print (type(P[0]))
-        print (type(self.Model[0]))
+        
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
+        print (type(self.Model[0]))
 
         # global model
         # self.global_model.load_state_dict(self.task.Global_agg(self.client))

@@ -40,11 +40,12 @@ class cnn(nn.Module):
         self.p = 0.5
         self.dataset = Dataset
         self.net = Net
+        # self.device = 'cpu'
+        self.args, self.trainloader, self.testloader = self.Set_dataset()
+
         self.Model, self.Optimizer = self.Set_Environment(Client)
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
-        # self.device = 'cpu'
-        self.args, self.trainloader, self.testloader = self.Set_dataset()
 
 
     # Preparing data

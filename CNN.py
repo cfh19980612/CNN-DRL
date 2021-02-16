@@ -233,13 +233,12 @@ class cnn(nn.Module):
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
 
-
-        for i in range (Client):
-            P[i] = copy.deepcopy(self.Model[i+1].state_dict())
-
         if self.device == 'cuda':
             for i in range (Client):
                 self.Model[i+1].cpu()
+        for i in range (Client):
+            P[i] = copy.deepcopy(self.Model[i+1].state_dict())
+
         return P
 
     # CNN_test

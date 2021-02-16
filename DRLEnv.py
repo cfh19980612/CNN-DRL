@@ -44,6 +44,8 @@ class FedEnv(gym.Env):
         # Loss = [0 for i in range (Client)]
 
         P = self.task.CNN_processes(epoch, self.client)
+        print (type(P[0]))
+        print (type(self.Model[0]))
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])

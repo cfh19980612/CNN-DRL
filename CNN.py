@@ -150,7 +150,7 @@ class cnn(nn.Module):
     # building models
     def Set_Environment(self, Client):
         print('==> Building model..')
-        
+
         if self.dataset == 'MNIST':
             for i in range (Client):
                 self.Model[i] = MNISTNet()
@@ -158,7 +158,7 @@ class cnn(nn.Module):
                                 momentum=0.9, weight_decay=5e-4)
             global_model = MNISTNet()
             return self.Model, global_model
-        
+
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client):
@@ -229,9 +229,9 @@ class cnn(nn.Module):
 #                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
         criterion = nn.CrossEntropyLoss()
         self.CNN_train(criterion, Client)
+        P = [None for i in range (Client)]
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
-
         return P
 
     # CNN_test

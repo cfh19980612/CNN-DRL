@@ -45,7 +45,6 @@ class cnn(nn.Module):
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
-
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 
     # Preparing data
@@ -160,13 +159,12 @@ class cnn(nn.Module):
             return self.Model, global_model
 
         elif self.dataset == 'CIFAR10':
-            if self.net == 'MobileNet':
-                for i in range (Client):
-                    self.Model[i] = MobileNet()
-                    self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
-                                momentum=0.9, weight_decay=5e-4)
-                global_model = MobileNet()
-                return self.Model, global_model
+            for i in range (Client):
+                self.Model[i] = MobileNet()
+                self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+                            momentum=0.9, weight_decay=5e-4)
+            global_model = MobileNet()
+            return self.Model, global_model
 
     # CNN training process
     def CNN_train(self, criterion, Client):
@@ -229,7 +227,7 @@ class cnn(nn.Module):
         #     for i in range (Client):
         #         self.Model[i].cpu()
         for i in range (Client):
-            P[i] = self.Model[i].state_dict()
+            P[i] = copy.deepcopy(self.Model[i].state_dict())
         return P
 
     # CNN_test

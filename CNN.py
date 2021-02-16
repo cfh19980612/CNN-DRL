@@ -230,6 +230,7 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
         self.CNN_train(criterion, Client)
         P = [None for i in range (Client)]
+        print ('hello')
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
         return P

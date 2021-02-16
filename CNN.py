@@ -17,6 +17,21 @@ from models import *
 from multiprocessing import Pool
 import queue
 
+import syft as sy  # <-- NEW: import the Pysyft library
+hook = sy.TorchHook(torch)  # <-- NEW: hook PyTorch ie add extra functionalities to support Federated Learning
+worker = []
+for i in range(Client = 10):
+    worker.append(sy.VirtualWorker(hook, id="worker"+i))
+# worker0 = sy.VirtualWorker(hook, id="worker0")
+# worker1 = sy.VirtualWorker(hook, id="worker1")  # <-- NEW: define remote worker bob
+# worker2 = sy.VirtualWorker(hook, id="worker2")  # <-- NEW: and alice
+# worker3 = sy.VirtualWorker(hook, id="worker3")
+# worker4 = sy.VirtualWorker(hook, id="worker4")
+# worker5 = sy.VirtualWorker(hook, id="worker5")
+# worker6 = sy.VirtualWorker(hook, id="worker6")
+# worker7 = sy.VirtualWorker(hook, id="worker7")
+# worker8 = sy.VirtualWorker(hook, id="worker8")
+# worker9 = sy.VirtualWorker(hook, id="worker9")
 
 
 
@@ -31,7 +46,7 @@ class cnn(nn.Module):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
 
-        self.args, self.trainloader, self.testloader = self.Set_dataset()
+        self.args, self.federated_train_loader, self.testloader = self.Set_dataset()
 
     # Preparing data
     def Set_dataset(self):
@@ -40,6 +55,14 @@ class cnn(nn.Module):
             parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
+            parser.add_argument('--world-size', default=2, type=int,
+                    help='number of distributed processes')
+            parser.add_argument('--dist-url', default='tcp://163.143.0.120:2222', type=str,
+                                help='url used to set up distributed training')
+            parser.add_argument('--dist-backend', default='gloo', type=str,
+                                help='distributed backend')
+            parser.add_argument('--dist-rank', default=0, type=int,
+                                help='rank of distributed processes')
             args = parser.parse_args()
             best_acc = 0  # best test accuracy
             start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -60,8 +83,12 @@ class cnn(nn.Module):
 
             trainset = torchvision.datasets.CIFAR10(
                 root='./data/', train=True, download=True, transform=transform_train)
-            trainloader = torch.utils.data.DataLoader(
-                trainset, batch_size=128, shuffle=True, num_workers=2)
+            # trainloader = torch.utils.data.DataLoader(
+            #     trainset, batch_size=128, shuffle=True, num_workers=2)
+
+            # federated train loader
+            federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
+                batch_size=64,shuffle=True, num_workers=1)
 
             testset = torchvision.datasets.CIFAR10(
                 root='./data/', train=False, download=True, transform=transform_test)
@@ -70,13 +97,21 @@ class cnn(nn.Module):
 
             classes = ('plane', 'car', 'bird', 'cat', 'deer',
                     'dog', 'frog', 'horse', 'ship', 'truck')
-            
-            return args, trainloader, testloader
+
+            return args, federated_train_loader, testloader
         elif self.dataset == 'MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
             parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
+            parser.add_argument('--world-size', default=2, type=int,
+                    help='number of distributed processes')
+            parser.add_argument('--dist-url', default='tcp://163.143.0.120:2222', type=str,
+                                help='url used to set up distributed training')
+            parser.add_argument('--dist-backend', default='gloo', type=str,
+                                help='distributed backend')
+            parser.add_argument('--dist-rank', default=0, type=int,
+                                help='rank of distributed processes')
             args = parser.parse_args()
             best_acc = 0  # best test accuracy
             start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -94,18 +129,21 @@ class cnn(nn.Module):
                             train = True,
                             download = True)
             # load dataset with batch=64
-            trainloader = torch.utils.data.DataLoader(dataset=trainset,
-                                                batch_size = 64,
-                                                shuffle = True)
+            # trainloader = torch.utils.data.DataLoader(dataset=trainset,
+            #                                     batch_size = 64,
+            #                                     shuffle = True)
+            # federated train loader
+            federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
+                batch_size=64,shuffle=True, num_workers=1)
 
             testset = torchvision.datasets.MNIST(root="./data/",
                            transform = transform,
                            train = False)
-            
+
             testloader = torch.utils.data.DataLoader(dataset=testset,
                                                batch_size = 64,
                                                shuffle = False)
-            return args, trainloader, testloader
+            return args, federated_train_loader, testloader
         else:
             print ('Data load error!')
             return 0
@@ -131,54 +169,40 @@ class cnn(nn.Module):
                 return self.Model, global_model
 
     # CNN training process
-    def CNN_train(self, criterion, Model, i):
-        Model = Model.to(self.device)
-
-        # gpu ?
-        if self.device == 'cuda':
-            Model = torch.nn.DataParallel(Model)
-            cudnn.benchmark = True
-        Model.train()
-
+    def CNN_train(self, criterion, Client):
         # training
         train_loss = 0
         correct = 0
         total = 0
         Loss = 0
-        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-            if batch_idx % Client == i:
-                inputs, targets = inputs.to(self.device), targets.to(self.device)
-                self.Optimizer[i].zero_grad()
-                outputs = Model(inputs)
-                Loss = criterion(outputs, targets)
-                Loss.backward()
-                self.Optimizer[i].step()
+        for batch_idx, (inputs, targets) in enumerate(self.federated_train_loader):
+            worker_idx = batch_idx%Client
+            self.Model[worker_idx].send(worker[worker_idx])
+            self.Model[worker_idx] = self.Model[worker_idx].to(self.device)
+            self.Model[worker_idx].train()
+            inputs, targets = inputs.to(self.device), targets.to(self.device)
+            self.Optimizer[i].zero_grad()
+            outputs = self.Model[worker_idx](inputs)
+            Loss = criterion(outputs, targets)
+            Loss.backward()
+            self.Optimizer[i].step()
 
-                train_loss += Loss.item()
-                _, predicted = outputs.max(1)
-                total += targets.size(0)
-                correct += predicted.eq(targets).sum().item()
-        if self.device == 'cuda':
-            Model.cpu()
-        result = copy.deepcopy(Model.state_dict())
-        return result
+            train_loss += Loss.item()
+            _, predicted = outputs.max(1)
+            total += targets.size(0)
+            correct += predicted.eq(targets).sum().item()
+            if self.device == 'cuda':
+                self.Model[worker_idx].cpu()
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
         # loss func
         criterion = nn.CrossEntropyLoss()
 
-        P = [None for i in range (Client)]
-        q=[] # save the feedback from each process
-        # Process pool
-        p_pool = Pool(Client)
-        for i in range (Client):
-            q.append(p_pool.apply_async(func=self.CNN_train, args=(criterion, self.Model[i], i)))
+        self.args.distributed = args.world_size > 1
 
-        p_pool.close()
-        p_pool.join()
-        for i in range (Client):
-            self.Model[i].load_state_dict(q[i])
+        if self.args.distributed:
+            dist.init_process_group(backend=args.dist_backend, init_method=args.dist_url,world_size=args.world_size,rank=args.dist_rank)
 
 
         # share a common dataset
@@ -204,7 +228,8 @@ class cnn(nn.Module):
 
 #                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
 #                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
-
+        criterion = nn.CrossEntropyLoss()
+        self.CNN_train(criterion, Client)
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
 

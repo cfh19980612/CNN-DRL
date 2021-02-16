@@ -40,7 +40,7 @@ class cnn(nn.Module):
         self.p = 0.5
         self.dataset = Dataset
         self.net = Net
-        self.Model = [None for i in range (Client+1)]
+        self.Model = self.Set_Environment(Client)
         self.Optimizer = [None for i in range (Client)]
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'

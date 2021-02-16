@@ -205,6 +205,7 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
+                    print ('hello 1')
                     client = batch_idx % Client
                     self.Model[client] = self.Model[client].to(device)
                     self.Model[client].train()
@@ -221,6 +222,7 @@ class cnn(nn.Module):
                     correct[client] += predicted.eq(targets).sum().item()
                     if self.device == 'cuda':
                         self.Model[client].cpu()
+                    print ('hello 2')
         # criterion = nn.CrossEntropyLoss()
         # self.CNN_train(criterion, Client)
         for i in range (Client):

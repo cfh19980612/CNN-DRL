@@ -32,7 +32,7 @@ class FedEnv(gym.Env):
                 self.latency[i][j] = random.randint(1,20)
 
         self.task = cnn(Client = self.client, Dataset = 'CIFAR10', Net = 'MobileNet')    # num of clients, num of neighbors, dataset, network
-        self.Model, self.global_model = self.task.Set_Environment(Client)
+        self.Model = self.task.Set_Environment(Client)
 
 
     def step(self, action, epoch):
@@ -49,7 +49,7 @@ class FedEnv(gym.Env):
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
-        print (type(self.Model[0]))
+        print (type(self.Model[1]))
 
         # global model
         # self.global_model.load_state_dict(self.task.Global_agg(self.client))

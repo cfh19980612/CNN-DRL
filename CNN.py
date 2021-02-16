@@ -162,6 +162,7 @@ class cnn(nn.Module):
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
                 for i in range (Client):
+                    print ('hello')
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
@@ -230,7 +231,6 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss()
         self.CNN_train(criterion, Client)
         P = [None for i in range (Client)]
-        print ('hello')
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
         return P

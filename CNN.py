@@ -45,7 +45,9 @@ class cnn(nn.Module):
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
+
         self.args, self.trainloader, self.testloader = self.Set_dataset()
+
 
     # Preparing data
     def Set_dataset(self):
@@ -54,14 +56,6 @@ class cnn(nn.Module):
             parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
-            parser.add_argument('--world-size', default=2, type=int,
-                    help='number of distributed processes')
-            parser.add_argument('--dist-url', default='tcp://163.143.0.120:2222', type=str,
-                                help='url used to set up distributed training')
-            parser.add_argument('--dist-backend', default='gloo', type=str,
-                                help='distributed backend')
-            parser.add_argument('--dist-rank', default=0, type=int,
-                                help='rank of distributed processes')
             args = parser.parse_args()
             best_acc = 0  # best test accuracy
             start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -81,16 +75,12 @@ class cnn(nn.Module):
             ])
 
             trainset = torchvision.datasets.CIFAR10(
-                root='./data/', train=True, download=True, transform=transform_train)
+                root='/home/ICDCS/cifar-10-batches-py/', train=True, download=True, transform=transform_train)
             trainloader = torch.utils.data.DataLoader(
                 trainset, batch_size=128, shuffle=True, num_workers=2)
 
-            # # federated train loader
-            # federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
-            #     batch_size=64,shuffle=True, num_workers=1)
-
             testset = torchvision.datasets.CIFAR10(
-                root='./data/', train=False, download=True, transform=transform_test)
+                root='/home/ICDCS/cifar-10-batches-py/', train=False, download=True, transform=transform_test)
             testloader = torch.utils.data.DataLoader(
                 testset, batch_size=100, shuffle=False, num_workers=2)
 
@@ -100,17 +90,9 @@ class cnn(nn.Module):
             return args, trainloader, testloader
         elif self.dataset == 'MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-            parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
-            parser.add_argument('--world-size', default=2, type=int,
-                    help='number of distributed processes')
-            parser.add_argument('--dist-url', default='tcp://163.143.0.120:2222', type=str,
-                                help='url used to set up distributed training')
-            parser.add_argument('--dist-backend', default='gloo', type=str,
-                                help='distributed backend')
-            parser.add_argument('--dist-rank', default=0, type=int,
-                                help='rank of distributed processes')
             args = parser.parse_args()
             best_acc = 0  # best test accuracy
             start_epoch = 0  # start from epoch 0 or last checkpoint epoch
@@ -131,9 +113,6 @@ class cnn(nn.Module):
             trainloader = torch.utils.data.DataLoader(dataset=trainset,
                                                 batch_size = 64,
                                                 shuffle = True)
-            # # federated train loader
-            # federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
-            #     batch_size=64,shuffle=True, num_workers=1)
 
             testset = torchvision.datasets.MNIST(root="./data/",
                            transform = transform,
@@ -157,59 +136,85 @@ class cnn(nn.Module):
                                 momentum=0.9, weight_decay=5e-4)
             global_model = MNISTNet()
             return self.Model, global_model
-
         elif self.dataset == 'CIFAR10':
-            for i in range (Client):
-                self.Model[i] = MobileNet()
-                self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
-                            momentum=0.9, weight_decay=5e-4)
-            global_model = MobileNet()
-            return self.Model, global_model
-
+            if self.net == 'MobileNet':
+                for i in range (Client):
+                    self.Model[i] = MobileNet()
+                    self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+                                momentum=0.9, weight_decay=5e-4)
+                global_model = MobileNet()
+                return self.Model, global_model
     # CNN training process
-    def CNN_train(self, criterion, Client):
-        # training
-        train_loss = 0
-        correct = 0
-        total = 0
-        Loss = 0
-        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-            worker_idx = batch_idx%Client
-            self.Model[worker_idx] = self.Model[worker_idx].to(self.device)
-            self.Model[worker_idx].train()
-            inputs, targets = inputs.to(self.device), targets.to(self.device)
-            self.Optimizer[i].zero_grad()
-            outputs = self.Model[worker_idx](inputs)
-            Loss = criterion(outputs, targets)
-            Loss.backward()
-            self.Optimizer[i].step()
+#     def CNN_train(self, i, criterion):
+#         self.Model[i] = self.Model[i].to(self.device)
+#         # gpu ?
+#         if self.device == 'cuda':
+#             self.Model[i] = torch.nn.DataParallel(self.Model[i])
+#             cudnn.benchmark = True
+#         self.Model[i].train()
 
-            train_loss += Loss.item()
-            _, predicted = outputs.max(1)
-            total += targets.size(0)
-            correct += predicted.eq(targets).sum().item()
-            if self.device == 'cuda':
-                self.Model[worker_idx].cpu()
+#         # training
+#         train_loss = 0
+#         correct = 0
+#         total = 0
+#         Loss = 0
+#         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+#             inputs, targets = inputs.to(self.device), targets.to(self.device)
+#             self.Optimizer[i].zero_grad()
+#             outputs = self.Model[i](inputs)
+#             Loss = criterion(outputs, targets)
+#             Loss.backward()
+#             self.Optimizer[i].step()
+
+#             train_loss += Loss.item()
+#             _, predicted = outputs.max(1)
+#             total += targets.size(0)
+#             correct += predicted.eq(targets).sum().item()
+#         if self.device == 'cuda':
+#             self.Model[i].cpu()
+
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
+        # loss func
+        criterion = nn.CrossEntropyLoss()
+
         # cpu ? gpu
         for i in range(Client):
             self.Model[i] = self.Model[i].to(self.device)
             if self.device == 'cuda':
                 self.Model[i] = torch.nn.DataParallel(self.Model[i])
                 cudnn.benchmark = True
-
         P = [None for i in range (Client)]
-        # loss func
-        criterion = nn.CrossEntropyLoss()
+
+#         # each silo owns a complete dataset
+#         for client in range (Client):
+#             self.Model[client].train()
+#             train_loss = 0
+#             correct = 0
+#             total = 0
+#             Loss = 0
+#             for batch_idx, (inputs, targets) in enumerate(self.trainloader):
+#                 inputs, targets = inputs.to(self.device), targets.to(self.device)
+#                 self.Optimizer[client].zero_grad()
+#                 outputs = self.Model[client](inputs)
+#                 Loss = criterion(outputs, targets)
+#                 Loss.backward()
+#                 self.Optimizer[client].step()
+
+#                 train_loss += Loss.item()
+#                 _, predicted = outputs.max(1)
+#                 total += targets.size(0)
+#                 correct += predicted.eq(targets).sum().item()
+#                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+#                                 % (train_loss/(batch_idx+1), 100.*correct/total, correct, total))
         # share a common dataset
         train_loss = [0 for i in range (Client)]
         correct = [0 for i in range (Client)]
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
-                if batch_idx < 10:
+                if batch_idx < 390:
                     client = batch_idx % Client
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
@@ -223,20 +228,27 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
-        # if self.device == 'cuda':
-        #     for i in range (Client):
-        #         self.Model[i].cpu()
+
+#                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
+#                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
+
+
         for i in range (Client):
             P[i] = copy.deepcopy(self.Model[i].state_dict())
+
+#         if self.device == 'cuda':
+#             for i in range (Client):
+#                 self.Model[i].cpu()
         return P
 
     # CNN_test
-    def CNN_test(self, epoch, model):
-        model = model.to(self.device)
+    def CNN_test(self, Model):
+        # cpu ? gpu
+        Model = Model.to(self.device)
         if self.device == 'cuda':
-            model = torch.nn.DataParallel(model)
+            Model = torch.nn.DataParallel(Model)
 
-        model.eval()
+        Model.eval()
         test_loss = 0
         correct = 0
         for data, target in self.testloader:
@@ -244,8 +256,8 @@ class cnn(nn.Module):
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
 #             with torch.no_grad(data,target):
-
-            output = model(data)
+                
+            output = Model(data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
             correct += pred.cpu().eq(indx_target).sum()
@@ -253,14 +265,14 @@ class cnn(nn.Module):
         test_loss = test_loss / len(self.testloader) # average over number of mini-batch
         accuracy = float(correct / len(self.testloader.dataset))
         if self.device == 'cuda':
-            model.cpu()
+            Model.cpu()
         return accuracy
 
     # local_aggregate
     def Local_agg(self, model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
-        # print ('P: ', p)
+        # print ('P: ', p)   
         time = 0
         Q = []
         P = copy.deepcopy(model.state_dict())
@@ -275,7 +287,7 @@ class cnn(nn.Module):
                         P[key] = P[key] + Q[j][key]
                         m += 1
             P[key] = torch.true_divide(P[key],m+1)
-
+            
         for j in range (Client):
             # if self.G.has_edge(i,j):
             time += latency[i][j]
@@ -301,7 +313,7 @@ class cnn(nn.Module):
     def toCsv(self, times, score):
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe.to_csv('/home/ICDCS-CIFAR/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
+        dataframe.to_csv('/home/ICDCS-MNIST/Test_data/test-4.csv',mode = 'w', header = False,index=False,sep=',')
     
     # return model
     def toModel(self):
@@ -354,4 +366,3 @@ class cnn(nn.Module):
 
             
             self.toCsv(times,score)
-

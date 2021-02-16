@@ -8,8 +8,6 @@ from collections import deque
 
 if __name__ == '__main__':
     print (torch.cuda.is_available())
-    st = '/home'+str(1)+'.csv'
-    print (st)
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 2, dataset = 'CIFAR10', net = 'MobileNet')  # env
     agent = Agent(state_size=100, action_size=100, random_seed=2)  # agent

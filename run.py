@@ -23,9 +23,10 @@ if __name__ == '__main__':
             state = env.reset(Tag = True)
         else:
             state = env.reset(Tag = False)
-
+        print ('PCA reset complete !')
         # initialize agent's noise
         agent.reset()
+        print ('Agent reset complete !')
         score = 0
 
 

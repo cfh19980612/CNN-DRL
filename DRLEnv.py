@@ -51,7 +51,7 @@ class FedEnv(gym.Env):
         # global model
         # self.global_model.load_state_dict(self.task.Global_agg(self.client))
 
-        accuracy = self.task.CNN_test(epoch, self.Model[0])
+        accuracy = self.task.CNN_test(self.Model[0])
 
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood

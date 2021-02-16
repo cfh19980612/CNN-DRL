@@ -45,7 +45,7 @@ class cnn(nn.Module):
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
-
+        self.global_model
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 
 

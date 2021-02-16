@@ -62,7 +62,7 @@ class cnn(nn.Module):
 
         # cpu ? gpu
         for i in range(client):
-            Model[i] = self.Model[i].to(self.device)
+            Model[i] = Model[i].to(self.device)
         P = [None for i in range (Client)]
 
 #         # each silo owns a complete dataset
@@ -170,12 +170,12 @@ class cnn(nn.Module):
         return P, time
 
     # Global aggregate
-    def Global_agg(self, Client):
+    def Global_agg(self, Client, Model):
 
-        P = copy.deepcopy(self.Model[0].state_dict())
+        P = copy.deepcopy(Model[0].state_dict())
         for key, value in P.items():
             for i in range (1,Client,1):
-                temp = copy.deepcopy(self.Model[i].state_dict())
+                temp = copy.deepcopy(Model[i].state_dict())
                 P[key] = P[key] + temp[key]
             P[key] = torch.true_divide(P[key],Client)
         return temp
@@ -191,9 +191,9 @@ class cnn(nn.Module):
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
         dataframe.to_csv('/home/CIFAR10/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
 
-    # return model
-    def toModel(self):
-        return self.Model
+    # # return model
+    # def toModel(self):
+    #     return self.Model
 
 
     # def forward(self, epoches, Client):

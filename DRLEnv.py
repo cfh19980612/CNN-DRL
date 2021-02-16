@@ -33,8 +33,8 @@ class FedEnv(gym.Env):
                 self.latency[i][j] = random.randint(1,20)
 
         self.task = cnn()    # num of clients, num of neighbors, dataset, network
-        self.Model, self.global_model, self.Optimization = self.Set_Environment(Client)
         self.args, self.trainloader, self.testloader = self.Set_dataset()
+        self.Model, self.global_model, self.Optimization = self.Set_Environment(Client)
 
     # Preparing data
     def Set_dataset(self):

@@ -195,6 +195,7 @@ class cnn(nn.Module):
 
     # multiple processes to train CNN models
     def CNN_processes(self, epoch, Client):
+        print ('hello 0')
         P = [None for i in range (Client)]
         # loss func
         criterion = nn.CrossEntropyLoss()
@@ -203,10 +204,8 @@ class cnn(nn.Module):
         correct = [0 for i in range (Client)]
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
-        print ('hello 0')
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
-                    print ('hello 1')
                     client = batch_idx % Client
                     self.Model[client] = self.Model[client].to(device)
                     self.Model[client].train()
@@ -223,7 +222,6 @@ class cnn(nn.Module):
                     correct[client] += predicted.eq(targets).sum().item()
                     if self.device == 'cuda':
                         self.Model[client].cpu()
-                    print ('hello 2')
         # criterion = nn.CrossEntropyLoss()
         # self.CNN_train(criterion, Client)
         for i in range (Client):

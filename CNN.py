@@ -234,7 +234,7 @@ class cnn(nn.Module):
 
         if self.device == 'cuda':
             for i in range (Client):
-                self.Model[i].cpu()
+                self.Model[i+1].cpu()
         return P
 
     # CNN_test

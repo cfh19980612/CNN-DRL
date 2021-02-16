@@ -12,17 +12,17 @@ class FedEnv(gym.Env):
         'video.frames_per_second': 2
     }
     def __init__(self, Client, k ):
-        
+
         self.client = Client
         self.p = 0.5
         self.Model = []
-          
+
         # small world
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
 
         # To DGL graph
         # self.g = dgl.from_networkx(self.G)
-        
+
         # PCA
         self.pca = PCA(n_components = self.client)
         # latency simulation
@@ -34,7 +34,6 @@ class FedEnv(gym.Env):
         self.task = cnn(Client = self.client, Dataset = 'CIFAR10', Net = 'MobileNet')    # num of clients, num of neighbors, dataset, network
         self.Model, self.global_model = self.task.Set_Environment(Client)
 
-    
 
     def step(self, action, epoch):
 
@@ -49,9 +48,9 @@ class FedEnv(gym.Env):
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
 
-        # global model   
-        # self.global_model.load_state_dict(self.task.Global_agg(self.client)) 
-        
+        # global model
+        # self.global_model.load_state_dict(self.task.Global_agg(self.client))
+
         accuracy = self.task.CNN_test(epoch,self.Model[0])
 
         # aggregate local model
@@ -61,9 +60,9 @@ class FedEnv(gym.Env):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
                 P_new[x],temp = self.task.Local_agg(self.Model[x],x,self.client,action,self.latency)
-                
+
                 Tim.append(temp)
-        # update     
+        # update
         for client in range (self.client):
             self.Model[client].load_state_dict(P_new[client])
 
@@ -73,7 +72,7 @@ class FedEnv(gym.Env):
         # PCA
         parm_local = {}
         S_local = [None for i in range (self.client)]
-        
+
         for i in range (self.client):
             S_local[i] = []
             Name = []
@@ -86,11 +85,10 @@ class FedEnv(gym.Env):
                     S_local[i].append(a)
             S_local[i] = np.array(S_local[i]).flatten()
         # to 1-axis
-        S_local = np.array(S_local).flatten()
-        
+
         # convert to [num_samples, num_features]
         S = np.reshape(S_local,(self.client,3217226))
-        
+
         # pca
         state = self.pca.fit_transform(S)
         state = state.flatten()

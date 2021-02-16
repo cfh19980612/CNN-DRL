@@ -16,7 +16,7 @@ if __name__ == '__main__':
     episode = []
 
     for i_episode in range(1, 200+1):
-        X, Y, Z = [], []  # x and y axis for test_data
+        X, Y, Z = [], [], []  # x and y axis for test_data
         start_time = 0
         # initialize pca ?
         if i_episode == 0:

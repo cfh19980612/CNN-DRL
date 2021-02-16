@@ -241,6 +241,7 @@ class cnn(nn.Module):
     # CNN_test
     def CNN_test(self, model):
         # cpu ? gpu
+        self.global_model.load_state_dict(model.state_dict())
         model.to(self.device)
         if self.device == 'cuda':
             model = torch.nn.DataParallel(model)

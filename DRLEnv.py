@@ -11,11 +11,12 @@ class FedEnv(gym.Env):
         'render.modes': ['human', 'rgb_array'],
         'video.frames_per_second': 2
     }
-    def __init__(self, Client, k ):
+    def __init__(self, Client, k, dataset, net):
 
         self.client = Client
         self.p = 0.5
-
+        self.dataset = dataset
+        self.net = net
         # small world
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
 
@@ -30,7 +31,7 @@ class FedEnv(gym.Env):
             for j in range (self.client):
                 self.latency[i][j] = random.randint(1,20)
 
-        self.task = cnn(Client = self.client, Dataset = 'CIFAR10', Net = 'MobileNet')    # num of clients, num of neighbors, dataset, network
+        self.task = cnn()    # num of clients, num of neighbors, dataset, network
         self.Model, self.global_model, self.Optimization = self.Set_Environment(Client)
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 

@@ -18,12 +18,8 @@ from multiprocessing import Pool
 import queue
 
 class cnn(nn.Module):
-    def __init__(self, Client, Dataset, Net):
+    def __init__(self):
         self.p = 0.5
-        self.dataset = Dataset
-        self.net = Net
-        # self.device = 'cpu'
-        self.args, self.trainloader, self.testloader = self.Set_dataset()
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

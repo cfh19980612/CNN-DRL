@@ -11,6 +11,7 @@ if __name__ == '__main__':
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 2)  # env
     agent = Agent(state_size=100, action_size=100, random_seed=2)  # agent
+    print ('yes')
     scores_deque = deque(maxlen=print_every)
     scores = []
     episode = []

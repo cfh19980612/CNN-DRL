@@ -240,8 +240,8 @@ class FedEnv(gym.Env):
 
         return state
     
-    def save_acc(self, X, Y, i_episode):
-        self.task.toCsv(X,Y,i_episode)
+    def save_acc(self, X, Y, Z, i_episode):
+        self.task.toCsv(X, Y, Z, i_episode)
 
     def render(self, mode='human'):
         return None

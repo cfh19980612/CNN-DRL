@@ -135,8 +135,9 @@ class cnn(nn.Module):
         return time
 
     # to CSV
-    def toCsv(self, times, score, i_episode):
+    def toCsv(self, times, score, loss, i_episode):
         location = '/home/CIFAR10/Test_data/test' + str(i_episode) + '.csv'
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
+        dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
         dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')

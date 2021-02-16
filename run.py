@@ -16,7 +16,7 @@ if __name__ == '__main__':
     episode = []
 
     for i_episode in range(1, 200+1):
-        X, Y = [], []  # x and y axis for test_data
+        X, Y, Z = [], []  # x and y axis for test_data
         start_time = 0
         # initialize pca ?
         if i_episode == 0:
@@ -39,6 +39,7 @@ if __name__ == '__main__':
             start_time += time
             X.append(start_time)
             Y.append(accuracy)
+            Z.append(test_loss)
             agent.step(state, action, reward, next_state)
             state = next_state
             score += reward
@@ -49,7 +50,7 @@ if __name__ == '__main__':
             pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Reward: %.3f" %(i, accuracy, test_loss, reward))
 
         # save accuracy
-        env.save_acc(X,Y,i_episode)
+        env.save_acc(X,Y,Z,i_episode)
         
         scores_deque.append(score)
         scores.append(score)

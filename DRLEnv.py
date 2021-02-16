@@ -9,6 +9,7 @@ from sklearn.decomposition import PCA
 from models import *
 
 import torch
+import torchvision
 import torchvision.transforms as transforms
 
 class FedEnv(gym.Env):

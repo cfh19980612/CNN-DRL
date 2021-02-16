@@ -39,7 +39,7 @@ class FedEnv(gym.Env):
 
         self.task = cnn()    # num of clients, num of neighbors, dataset, network
         self.args, self.trainloader, self.testloader = self.Set_dataset()
-        self.Model, self.global_model, self.Optimization = self.Set_Environment(Client)
+        self.Model, self.global_model, self.Optimizer = self.Set_Environment(Client)
 
     # Preparing data
     def Set_dataset(self):
@@ -147,7 +147,7 @@ class FedEnv(gym.Env):
         Tim, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
 
-        P = self.task.CNN_processes(self.Model, self.Optimization, self.client, self.trainloader)
+        P = self.task.CNN_processes(self.Model, self.Optimizer, self.client, self.trainloader)
         print (type(P[0]))
 
         for i in range (self.client):

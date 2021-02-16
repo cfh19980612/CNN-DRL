@@ -56,7 +56,7 @@ class cnn(nn.Module):
 
 
     # multiple processes to train CNN models
-    def CNN_processes(self, Model, Optimization, Client, trainloader):
+    def CNN_processes(self, Model, Optimizer, Client, trainloader):
         # loss func
         criterion = nn.CrossEntropyLoss()
 

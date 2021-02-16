@@ -21,7 +21,7 @@ import syft as sy  # <-- NEW: import the Pysyft library
 hook = sy.TorchHook(torch)  # <-- NEW: hook PyTorch ie add extra functionalities to support Federated Learning
 worker = []
 for i in range(10):
-    worker.append(sy.VirtualWorker(hook, id="worker"+i))
+    worker.append(sy.VirtualWorker(hook, id="worker"+str(i)))
 # worker0 = sy.VirtualWorker(hook, id="worker0")
 # worker1 = sy.VirtualWorker(hook, id="worker1")  # <-- NEW: define remote worker bob
 # worker2 = sy.VirtualWorker(hook, id="worker2")  # <-- NEW: and alice

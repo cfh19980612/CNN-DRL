@@ -206,7 +206,7 @@ class cnn(nn.Module):
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
                     client = batch_idx % Client
-                    self.Model[client] = self.Model[client].to(device)
+                    self.Model[client] = self.Model[client].to(self.device)
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     self.Optimizer[client].zero_grad()

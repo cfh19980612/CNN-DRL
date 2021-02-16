@@ -29,7 +29,6 @@ class Agent():
     """Interacts with and learns from the environment."""
 
     def __init__(self, state_size, action_size, random_seed):
-        print ('Agent reset start !')
         """Initialize an Agent object.
 
         Params
@@ -43,9 +42,7 @@ class Agent():
         self.seed = random.seed(random_seed)
 
         # Actor Network (w/ Target Network)
-        print ('load into cuda !')
         self.actor_local = Actor(state_size, action_size, random_seed).to(device)
-        print ('load complete !')
         self.actor_target = Actor(state_size, action_size, random_seed).to(device)
         self.actor_optimizer = optim.Adam(self.actor_local.parameters(), lr=LR_ACTOR)
 
@@ -53,13 +50,11 @@ class Agent():
         self.critic_local = Critic(state_size, action_size, random_seed).to(device)
         self.critic_target = Critic(state_size, action_size, random_seed).to(device)
         self.critic_optimizer = optim.Adam(self.critic_local.parameters(), lr=LR_CRITIC, weight_decay=WEIGHT_DECAY)
-        
         # Noise process
         self.noise = OUNoise(action_size, random_seed)
 
         # Replay memory
         self.memory = ReplayBuffer(action_size, BUFFER_SIZE, BATCH_SIZE, random_seed)
-        print ('Agent reset complete !')
 
     def step(self, state, action, reward, next_state):
         """Save experience in replay memory, and use random sample from buffer to learn."""

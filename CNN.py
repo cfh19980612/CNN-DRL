@@ -50,7 +50,7 @@ class cnn(nn.Module):
     def returnModel(self, Client):
         P = []
         for i in range (Client):
-            P.append(self.Model[i+1].state_dict())
+            P.append(self.Model[i+1])
         return P
 
     # Preparing data

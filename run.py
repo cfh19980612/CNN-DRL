@@ -54,7 +54,7 @@ if __name__ == '__main__':
         scores_deque.append(score)
         scores.append(score)
         episode.append(i_episode)
-        print('\rEpisode {}\tAverage Score: {:.3f}'.format(i_episode, score), end="")
+        print('\rEpisode {}\tAverage Score: {:.3f}'.format(i_episode, score), end="\n")
         torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
         

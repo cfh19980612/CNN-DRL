@@ -1,5 +1,5 @@
 import os
-os.environ['CUDA_ENABLE_DEVICES'] = '0'
+# os.environ['CUDA_ENABLE_DEVICES'] = '0'
 
 import torch
 import torch.nn as nn

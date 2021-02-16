@@ -56,12 +56,12 @@ class cnn(nn.Module):
 
 
     # multiple processes to train CNN models
-    def CNN_processes(self, Model, Optimization, client, trainloader):
+    def CNN_processes(self, Model, Optimization, Client, trainloader):
         # loss func
         criterion = nn.CrossEntropyLoss()
 
         # cpu ? gpu
-        for i in range(client):
+        for i in range(Client):
             Model[i] = Model[i].to(self.device)
         P = [None for i in range (Client)]
 

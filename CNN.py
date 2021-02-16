@@ -46,7 +46,7 @@ class cnn(nn.Module):
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
 
-        self.args, self.federated_train_loader, self.testloader = self.Set_dataset()
+        self.args, self.trainloader, self.testloader = self.Set_dataset()
 
     # Preparing data
     def Set_dataset(self):
@@ -83,12 +83,12 @@ class cnn(nn.Module):
 
             trainset = torchvision.datasets.CIFAR10(
                 root='./data/', train=True, download=True, transform=transform_train)
-            # trainloader = torch.utils.data.DataLoader(
-            #     trainset, batch_size=128, shuffle=True, num_workers=2)
+            trainloader = torch.utils.data.DataLoader(
+                trainset, batch_size=128, shuffle=True, num_workers=2)
 
-            # federated train loader
-            federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
-                batch_size=64,shuffle=True, num_workers=1)
+            # # federated train loader
+            # federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
+            #     batch_size=64,shuffle=True, num_workers=1)
 
             testset = torchvision.datasets.CIFAR10(
                 root='./data/', train=False, download=True, transform=transform_test)
@@ -98,7 +98,7 @@ class cnn(nn.Module):
             classes = ('plane', 'car', 'bird', 'cat', 'deer',
                     'dog', 'frog', 'horse', 'ship', 'truck')
 
-            return args, federated_train_loader, testloader
+            return args, trainloader, testloader
         elif self.dataset == 'MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
             parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
@@ -129,12 +129,12 @@ class cnn(nn.Module):
                             train = True,
                             download = True)
             # load dataset with batch=64
-            # trainloader = torch.utils.data.DataLoader(dataset=trainset,
-            #                                     batch_size = 64,
-            #                                     shuffle = True)
-            # federated train loader
-            federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
-                batch_size=64,shuffle=True, num_workers=1)
+            trainloader = torch.utils.data.DataLoader(dataset=trainset,
+                                                batch_size = 64,
+                                                shuffle = True)
+            # # federated train loader
+            # federated_train_loader = sy.FederatedDataLoader(trainset.federated((worker1,worker2,worker3,worker4,worker5,worker6,worker7,worker8,worker9)),
+            #     batch_size=64,shuffle=True, num_workers=1)
 
             testset = torchvision.datasets.MNIST(root="./data/",
                            transform = transform,
@@ -143,7 +143,7 @@ class cnn(nn.Module):
             testloader = torch.utils.data.DataLoader(dataset=testset,
                                                batch_size = 64,
                                                shuffle = False)
-            return args, federated_train_loader, testloader
+            return args, trainloader, testloader
         else:
             print ('Data load error!')
             return 0
@@ -175,9 +175,8 @@ class cnn(nn.Module):
         correct = 0
         total = 0
         Loss = 0
-        for batch_idx, (inputs, targets) in enumerate(self.federated_train_loader):
+        for batch_idx, (inputs, targets) in enumerate(self.trainloader):
             worker_idx = batch_idx%Client
-            self.Model[worker_idx].send(worker[worker_idx])
             self.Model[worker_idx] = self.Model[worker_idx].to(self.device)
             self.Model[worker_idx].train()
             inputs, targets = inputs.to(self.device), targets.to(self.device)

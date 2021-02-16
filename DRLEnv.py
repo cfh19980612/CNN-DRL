@@ -163,7 +163,7 @@ class FedEnv(gym.Env):
         for i in range (1):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
-                P_new[x],temp = self.task.Local_agg(self.Model[x+1],x,self.client,action,self.latency)
+                P_new[x],temp = self.task.Local_agg(self.Model, x, self.client,action, self.latency)
 
                 Tim.append(temp)
         # update
@@ -180,7 +180,7 @@ class FedEnv(gym.Env):
         for i in range (self.client):
             S_local[i] = []
             Name = []
-            for name, parameters in self.Model[i+1].named_parameters():
+            for name, parameters in self.Model[i].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)

@@ -93,13 +93,13 @@ class cnn(nn.Module):
         return accuracy
 
     # local_aggregate
-    def Local_agg(self, Model, model, i, Client, Imp, latency):
+    def Local_agg(self, Model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
         # print ('P: ', p)
         time = 0
         Q = []
-        P = copy.deepcopy(model.state_dict())
+        P = copy.deepcopy(Model[i].state_dict())
         for j in range (Client):
             Q.append(copy.deepcopy(Model[j].state_dict()))
         for key, value in P.items():

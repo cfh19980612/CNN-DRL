@@ -40,12 +40,11 @@ class cnn(nn.Module):
         self.p = 0.5
         self.dataset = Dataset
         self.net = Net
-        self.Model = [None for i in range (Client)]
+        self.Model = [None for i in range (Client+1)]
         self.Optimizer = [None for i in range (Client)]
         # cpu ? gpu
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
         # self.device = 'cpu'
-        self.global_model = MobileNet()
         self.args, self.trainloader, self.testloader = self.Set_dataset()
 
 
@@ -138,11 +137,11 @@ class cnn(nn.Module):
             return self.Model, self.global_model
         elif self.dataset == 'CIFAR10':
             if self.net == 'MobileNet':
-                for i in range (Client):
+                for i in range (Client+1):
                     self.Model[i] = MobileNet()
                     self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
-                return self.Model, self.global_model
+                return self.Model
     # CNN training process
 #     def CNN_train(self, i, criterion):
 #         self.Model[i] = self.Model[i].to(self.device)
@@ -180,7 +179,7 @@ class cnn(nn.Module):
 
         # cpu ? gpu
         for i in range(Client):
-            self.Model[i] = self.Model[i].to(self.device)
+            self.Model[i+1] = self.Model[i+1].to(self.device)
         P = [None for i in range (Client)]
 
 #         # each silo owns a complete dataset
@@ -211,7 +210,7 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         for batch_idx, (inputs, targets) in enumerate(self.trainloader):
                 if batch_idx < 10:
-                    client = batch_idx % Client
+                    client = (batch_idx % Client)+1
                     self.Model[client].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     self.Optimizer[client].zero_grad()
@@ -230,7 +229,7 @@ class cnn(nn.Module):
 
 
         for i in range (Client):
-            P[i] = copy.deepcopy(self.Model[i].state_dict())
+            P[i] = copy.deepcopy(self.Model[i+1].state_dict())
 
 #         if self.device == 'cuda':
 #             for i in range (Client):
@@ -240,12 +239,10 @@ class cnn(nn.Module):
     # CNN_test
     def CNN_test(self, model):
         # cpu ? gpu
-        self.global_model.load_state_dict(model.state_dict())
-        self.global_model.to(self.device)
-        if self.device == 'cuda':
-            self.global_model = torch.nn.DataParallel(self.global_model)
+        self.Model[0].load_state_dict(model.state_dict())
+        self.Model[0].to(self.device)
 
-        self.global_model.eval()
+        self.Model[0].eval()
         test_loss = 0
         correct = 0
         for data, target in self.testloader:
@@ -254,7 +251,7 @@ class cnn(nn.Module):
                 data, target = data.cuda(), target.cuda()
 #             with torch.no_grad(data,target):
 
-            output = self.global_model(data)
+            output = self.Model[0](data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
             correct += pred.cpu().eq(indx_target).sum()
@@ -262,7 +259,7 @@ class cnn(nn.Module):
         test_loss = test_loss / len(self.testloader) # average over number of mini-batch
         accuracy = float(correct / len(self.testloader.dataset))
         if self.device == 'cuda':
-            self.global_model.cpu()
+            self.Model[0].cpu()
         return accuracy
 
     # local_aggregate

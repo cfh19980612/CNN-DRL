@@ -139,7 +139,8 @@ class cnn(nn.Module):
             if self.net == 'MobileNet':
                 for i in range (Client+1):
                     self.Model[i] = MobileNet()
-                    self.Optimizer[i] = torch.optim.SGD(self.Model[i].parameters(), lr=self.args.lr,
+                for i in range (Client):
+                    self.Optimizer[i] = torch.optim.SGD(self.Model[i+1].parameters(), lr=self.args.lr,
                                 momentum=0.9, weight_decay=5e-4)
                 return self.Model
     # CNN training process

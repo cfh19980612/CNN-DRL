@@ -102,14 +102,14 @@ class FedEnv(gym.Env):
 
 
     def reset(self, Tag):
-        self.Model, global_model = self.task.Set_Environment(self.client)
+        self.Model = self.task.Set_Environment(self.client)
         # PCA
         parm_local = {}
         S_local = [None for i in range (self.client)]
         for i in range (self.client):
             S_local[i] = []
             Name = []
-            for name, parameters in self.Model[i].named_parameters():
+            for name, parameters in self.Model[i+1].named_parameters():
                 # print(name,':',parameters.size())
                 parm_local[name]=parameters.detach().cpu().numpy()
                 Name.append(name)

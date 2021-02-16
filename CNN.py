@@ -242,7 +242,7 @@ class cnn(nn.Module):
         return P
 
     # CNN_test
-    def CNN_test(self, Model):
+    def CNN_test(self, epoch, Model):
         # cpu ? gpu
         Model = Model.to(self.device)
         if self.device == 'cuda':
@@ -256,7 +256,7 @@ class cnn(nn.Module):
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
 #             with torch.no_grad(data,target):
-                
+
             output = Model(data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
@@ -272,7 +272,7 @@ class cnn(nn.Module):
     def Local_agg(self, model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
-        # print ('P: ', p)   
+        # print ('P: ', p)
         time = 0
         Q = []
         P = copy.deepcopy(model.state_dict())
@@ -287,7 +287,7 @@ class cnn(nn.Module):
                         P[key] = P[key] + Q[j][key]
                         m += 1
             P[key] = torch.true_divide(P[key],m+1)
-            
+
         for j in range (Client):
             # if self.G.has_edge(i,j):
             time += latency[i][j]
@@ -297,7 +297,7 @@ class cnn(nn.Module):
     def Global_agg(self, Client):
 
         P = copy.deepcopy(self.Model[0].state_dict())
-        for key, value in P.items():  
+        for key, value in P.items():
             for i in range (1,Client,1):
                 temp = copy.deepcopy(self.Model[i].state_dict())
                 P[key] = P[key] + temp[key]
@@ -313,56 +313,56 @@ class cnn(nn.Module):
     def toCsv(self, times, score):
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe.to_csv('/home/ICDCS-MNIST/Test_data/test-4.csv',mode = 'w', header = False,index=False,sep=',')
-    
+        dataframe.to_csv('/home/CIFAR10/Test_data/test.csv',mode = 'w', header = False,index=False,sep=',')
+
     # return model
     def toModel(self):
         return self.Model
-    
 
-    def forward(self, epoches, Client):
-        times, score = [], []
-        t = 0
-        args, trainloader, testloader = self.Set_dataset()
-        self.Set_Environment(args)
 
-        global_model = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
+    # def forward(self, epoches, Client):
+    #     times, score = [], []
+    #     t = 0
+    #     args, trainloader, testloader = self.Set_dataset()
+    #     self.Set_Environment(args)
 
-        # GAT network
-        net = GATLayer(self.g,in_dim = 864,out_dim = 20)
+    #     global_model = MobileNet() if self.net == 'MobileNet' else VGG('VGG19')
 
-        for epoch in range(0, epoches):
-            
-            Tim, Loss = [], []
-            # Loss = [0 for i in range (Client)]
+    #     # GAT network
+    #     net = GATLayer(self.g,in_dim = 864,out_dim = 20)
 
-            P = self.CNN_train(epoch,trainloader)
+    #     for epoch in range(0, epoches):
 
-            for i in range (Client):
-                self.Model[i].load_state_dict(P[i])
+    #         Tim, Loss = [], []
+    #         # Loss = [0 for i in range (Client)]
 
-            # global model   
-            # global_model = self.Global_agg() 
-            
-            accuracy = self.CNN_test(epoch,self.Model[0],testloader)
+    #         P = self.CNN_train(epoch,trainloader)
 
-            score.append(accuracy)
+    #         for i in range (Client):
+    #             self.Model[i].load_state_dict(P[i])
 
-            # aggregate local model
-            # Step 1: calculate the weight for each neighborhood
-            net.update_graph(self.Model, Client)
-            net.forward()
-            # Step 2: aggregate the model from neighborhood
-            for i in range (5):
-                P_new = [None for m in range (Client)]
-                for x in range (Client):
-                    P_new[x], temp = self.Local_agg(self.Model[x],x)
-                    Tim.append(temp)
-            # update     
-            for client in range (Client):
-                self.Model[client].load_state_dict(P_new[client])
+    #         # global model
+    #         # global_model = self.Global_agg()
 
-            times, t = self.step_time(times, Tim, t)
+    #         accuracy = self.CNN_test(epoch,self.Model[0],testloader)
 
-            
-            self.toCsv(times,score)
+    #         score.append(accuracy)
+
+    #         # aggregate local model
+    #         # Step 1: calculate the weight for each neighborhood
+    #         net.update_graph(self.Model, Client)
+    #         net.forward()
+    #         # Step 2: aggregate the model from neighborhood
+    #         for i in range (5):
+    #             P_new = [None for m in range (Client)]
+    #             for x in range (Client):
+    #                 P_new[x], temp = self.Local_agg(self.Model[x],x)
+    #                 Tim.append(temp)
+    #         # update
+    #         for client in range (Client):
+    #             self.Model[client].load_state_dict(P_new[client])
+
+    #         times, t = self.step_time(times, Tim, t)
+
+
+    #         self.toCsv(times,score)

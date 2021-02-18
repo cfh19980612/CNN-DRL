@@ -178,7 +178,7 @@ def Aggregate(model, client):
         for i in range (1,client):
             temp = model[i].state_dict()
             P[key] = P[key] + temp[key]
-        P[key] = torch.true_divide(P[key],client)
+        P[key] = torch.div(P[key],client)
     return P
 
 def run(dataset, net, client):

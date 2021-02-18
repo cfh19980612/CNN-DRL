@@ -26,7 +26,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def Set_dataset(dataset):
     if dataset == 'CIFAR10':
         parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-        parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
+        parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
         parser.add_argument('--resume', '-r', action='store_true',
                             help='resume from checkpoint')
         parser.add_argument('--epoch',default=100,type=int,help='epoch')

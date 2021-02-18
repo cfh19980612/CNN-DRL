@@ -144,7 +144,7 @@ def Train(model, optimizer, client, trainloader):
                 total[idx] += targets.size(0)
                 correct[idx] += predicted.eq(targets).sum().item()
     time_end = time.time()
-    if self.device == 'cuda':
+    if device == 'cuda':
         for i in range (client):
             model[i].cpu()
     for i in range (client):

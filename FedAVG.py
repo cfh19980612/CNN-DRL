@@ -226,7 +226,7 @@ def run(dataset, net, client):
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][0])
-        acc, loss = Test(model[0], testloader)
+        acc, loss = Test(model[9], testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())

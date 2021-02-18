@@ -178,7 +178,7 @@ def Aggregate(model, client):
     # for key in P.keys():
     #     P[key] += P[key]
     #     P[key] = torch.true_divide(P[key],2)
-    for key in P.keys():
+    for key in P[0].keys():
         for i in range (client):
             if i != 0:
                 P[0][key] += P[i][key]

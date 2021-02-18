@@ -116,7 +116,7 @@ def Set_model(net, client, args):
         global_model = MobileNet()
         return Model, global_model, Optimizer
 
-def Train(model, client, trainloader):
+def Train(model, optimizer, client, trainloader):
     criterion = nn.CrossEntropyLoss().to(device)
     # cpu ? gpu
     for i in range(client):
@@ -134,11 +134,11 @@ def Train(model, client, trainloader):
                 client = (batch_idx % client)
                 model[client].train()
                 inputs, targets = inputs.to(device), targets.to(device)
-                Optimizer[client].zero_grad()
+                optimizer[client].zero_grad()
                 outputs = model[client](inputs)
                 Loss[client] = criterion(outputs, targets)
                 Loss[client].backward()
-                Optimizer[client].step()
+                optimizer[client].step()
 
                 train_loss[client] += Loss[client].item()
                 _, predicted = outputs.max(1)
@@ -189,7 +189,7 @@ def run(dataset, net, client):
     pbar = tqdm(range(args.epoch))
     start_time = 0
     for i in range (args.epoch):
-        Temp, process_time = Train(model, client, trainloader)
+        Temp, process_time = Train(model, optimizer, client, trainloader)
         for i in range (client):
             model[i].load_state_dict(Temp[i])
         global_model.load_state_dict(Aggregate(model, client))

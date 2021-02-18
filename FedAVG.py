@@ -199,10 +199,10 @@ def run(dataset, net, client):
     pbar = tqdm(range(args.epoch))
     start_time = 0
     for i in range (args.epoch):
-        Temp, process_time = Train(model, optimizer, client, trainloader)
+        Temp, process_time = Train(copy.deepcopy(model), optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(model, client))
+        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
         acc, loss = Test(global_model, testloader)
         for j in range (client):
             model[j].load_state_dict(global_model.state_dict())

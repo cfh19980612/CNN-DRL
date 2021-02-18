@@ -165,9 +165,6 @@ def Test(model, testloader):
     model = model.to(device)
     P = model.state_dict()
     model.train()
-    for key in P.keys():
-        if key == 'layers.1.bn1.weight':
-            print('test: ',P[key][1])
     test_loss = 0
     correct = 0
     for data, target in testloader:
@@ -188,21 +185,11 @@ def Aggregate(model, client):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
-
-    for i in range (client):
-        for key in P[0].keys():
-            if key == 'layers.1.bn1.weight':
-                print(P[i][key][0])
-
     for key in P[0].keys():
         for i in range (client):
             if i != 0:
                 P[0][key] =torch.add(P[0][key], P[i][key])
         P[0][key] = torch.true_divide(P[0][key],client)
-
-    for key in P[0].keys():
-        if key == 'layers.1.bn1.weight':
-            print('final: ',P[0][key][1])
     return P[0]
 
 
@@ -216,7 +203,6 @@ def run(dataset, net, client):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_temp = MobileNet()
         global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
         acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))

@@ -169,7 +169,6 @@ def Test(model, testloader):
     for data, target in testloader:
         indx_target = target.clone()
         data, target = data.to(device), target.to(device)
-        accuracy, loss = model.inference
         with torch.no_grad():
             output = model(data)
         test_loss += F.cross_entropy(output, target).data

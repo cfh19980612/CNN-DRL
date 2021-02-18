@@ -198,7 +198,7 @@ def Aggregate(model, client):
     for i in range (client):
         for key in P.keys():
             if key == 'layers.1.bn1.weight':
-                print(P[i][key])
+                print(P[i][key][0])
     return P[0]
 
 

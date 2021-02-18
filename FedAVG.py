@@ -143,7 +143,7 @@ def Train(model, client, trainloader):
                 _, predicted = outputs.max(1)
                 total[client] += targets.size(0)
                 correct[client] += predicted.eq(targets).sum().item()
-    time_end =  = time.time()
+    time_end = time.time()
     if self.device == 'cuda':
         for i in range (Client):
             model[i].cpu()
@@ -198,7 +198,7 @@ def run(dataset, net, client):
         X.append(start_time)
         Y.append(acc)
         Z.append(loss)
-    location = '/home/CIFAR10/Test_data/FedAVG.csv'
+    location = '/home/cifar-gcn-drl/Test_data/FedAVG.csv'
     dataframe = pd.DataFrame(times, columns=['X'])
     dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
     dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)

@@ -189,8 +189,8 @@ def run(dataset, net, client):
     start_time = 0
     for i in range (args.epoch):
         Temp, process_time = Train(model, optimizer, client, trainloader)
-        for i in range (client):
-            model[i].load_state_dict(Temp[i])
+        for j in range (client):
+            model[j].load_state_dict(Temp[j])
         global_model.load_state_dict(Aggregate(model, client))
         acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f" %(i, acc, loss))

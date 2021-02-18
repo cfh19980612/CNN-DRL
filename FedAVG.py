@@ -190,11 +190,13 @@ def run(dataset, net, client):
     start_time = 0
     for i in range (args.epoch):
         Temp, process_time = Train(model, optimizer, client, trainloader)
+        print(type(Temp[0]))
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         temp = Aggregate(model, client)
+        print(type(temp))
         for j in range (client):
-            model[j].load_state_dict(temp[j])
+            model[j].load_state_dict(temp)
         global_model.load_state_dict(Aggregate(model, client))
         acc, loss = Test(model[0], testloader)
         start_time += process_time

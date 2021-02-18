@@ -164,7 +164,7 @@ def Test(model, testloader):
     # cpu ? gpu
     model = model.to(device)
     P = model.state_dict()
-    model.eval()
+    model.train()
     for key in P.keys():
         if key == 'layers.1.bn1.weight':
             print('test: ',P[key][1])

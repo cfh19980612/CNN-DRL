@@ -11,13 +11,14 @@ import random
 import copy
 import pandas as pd
 import numpy as np
-from utils import progress_bar
 import queue
 import math
 import networkx as nx
-import numpy as np
 import argparse
 import time
+
+from utils import progress_bar
+from tqdm import tqdm, trange
 from models import *
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'

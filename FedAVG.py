@@ -173,7 +173,7 @@ def Test(model, testloader):
     return accuracy, test_loss
 
 def Aggregate(model, client):
-    P = model[0]
+    P = copy.deepcopy(model[0].state_dict())
     # for key, value in P.items():
     #     for i in range (1,client):
     #         temp = model[i]
@@ -187,13 +187,11 @@ def run(dataset, net, client):
     model, global_model, optimizer = Set_model(net, client, args)
     pbar = tqdm(range(args.epoch))
     start_time = 0
-    weight_temp = []
     for i in range (args.epoch):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-            weight_temp.append(copy.deepcopy(model[j].state_dict()))
-        global_model.load_state_dict(Aggregate(weight_temp, client))
+        global_model.load_state_dict(Aggregate(model, client))
         acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f" %(i, acc, loss))
         start_time += process_time

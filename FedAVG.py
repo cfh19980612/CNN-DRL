@@ -222,7 +222,7 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         temp = Aggregate(copy.deepcopy(model), client)
-        global_model.load_state_dict(model[0])
+        global_model.load_state_dict(model[0].state_dict())
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][0])

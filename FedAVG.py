@@ -185,7 +185,7 @@ def run(dataset, net, client):
     args, trainloader, testloader = Set_dataset(dataset)
     model, global_model, optimizer = Set_model(net, client, args)
     pbar = tqdm(range(args.epoch)
-    X,Y,Z = [], [], []
+    X, Y, Z = [], [], []
     start_time = 0
     for i in range (args.epoch):
         Temp, process_time = Train(model, trainloader)

@@ -184,11 +184,11 @@ def Aggregate(model, client, i):
     #     P[0][key] = torch.true_divide(P[0][key],client)
     Q = []
     P = copy.deepcopy(model[i].state_dict())
-    for j in range (Client):
+    for j in range (client):
         Q.append(copy.deepcopy(model[j].state_dict()))
     for key, value in P.items():
         m = 0
-        for j in range (Client):
+        for j in range (client):
             if i != j:
                 P[key] = P[key] + Q[j][key]
                 m += 1

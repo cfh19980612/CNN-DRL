@@ -176,7 +176,8 @@ def Aggregate(model, client):
     P = copy.deepcopy(model[0].state_dict())
     for key in P.keys():
         for i in range (1,client):
-            P[key] = P[key] + model[i][key]
+            temp = model[i].state_dict()
+            P[key] = P[key] + temp[key]
         P[key] = torch.div(P[key],client)
     return P
 

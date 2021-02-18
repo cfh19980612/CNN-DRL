@@ -222,11 +222,11 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         temp = Aggregate(copy.deepcopy(model), client)
-        global_model.load_state_dict(temp)
+        global_model.load_state_dict(model[0].state_dict())
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][0])
-        acc, loss = Test(model[9], testloader)
+        acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())

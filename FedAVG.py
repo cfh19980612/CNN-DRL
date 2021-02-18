@@ -202,10 +202,11 @@ def run(dataset, net, client):
         Temp, process_time = Train(copy.deepcopy(model), optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-        acc, loss = Test(global_model, testloader)
+        global_temp = MobileNet()
+        global_temp.load_state_dict(Aggregate(copy.deepcopy(model), client))
+        acc, loss = Test(global_temp, testloader)
         for j in range (client):
-            model[j].load_state_dict(global_model.state_dict())
+            model[j].load_state_dict(global_temp.state_dict())
         start_time += process_time
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         X.append(start_time)

@@ -67,14 +67,13 @@ class cnn(nn.Module):
     def CNN_test(self, model, testloader):
         # cpu ? gpu
         model = model.to(self.device)
-        model.without
         model.eval()
         test_loss = 0
         correct = 0
         for data, target in testloader:
             indx_target = target.clone()
             if self.device == 'cuda':
-                data, target = data.cuda(), target.cuda()
+                data, target = data.to(device), target.to(device)
             with torch.no_grad():
                 output = model(data)
             test_loss += F.cross_entropy(output, target).data

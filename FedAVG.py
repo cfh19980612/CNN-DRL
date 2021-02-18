@@ -213,8 +213,8 @@ def run(dataset, net, client):
             model[j].load_state_dict(Temp[j])
         temp = Aggregate(copy.deepcopy(model), client)
         global_temp = MobileNet()
-        global_model.load_state_dict(model[0].state_dict())
-        acc, loss = Test(global_temp, testloader)
+        global_model.load_state_dict(temp)
+        acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())

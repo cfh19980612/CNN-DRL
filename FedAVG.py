@@ -139,8 +139,7 @@ def Train(model, optimizer, client, trainloader):
                 Loss[idx] = criterion(outputs, targets)
                 Loss[idx].backward()
                 optimizer[idx].step()
-
-                train_loss[client] += Loss[idx].item()
+                train_loss[idx] += Loss[idx].item()
                 _, predicted = outputs.max(1)
                 total[idx] += targets.size(0)
                 correct[idx] += predicted.eq(targets).sum().item()

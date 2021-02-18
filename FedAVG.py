@@ -173,17 +173,16 @@ def Test(model, testloader):
     return accuracy, test_loss
 
 def Aggregate(model, client):
-    P = copy.deepcopy(model[0].state_dict())
+    P = []
+    P.append(copy.deepcopy(model[0].state_dict()))
     # for key in P.keys():
     #     P[key] += P[key]
     #     P[key] = torch.true_divide(P[key],2)
-    temp = []
     for key in P.keys():
-        for i in range (1,3):
-            
-            temp.append(copy.deepcopy(model[i].state_dict()))
-            P[key] += temp[i-1][key]
-        P[key] = torch.true_divide(P[key],3)
+        for i in range (client):
+            if i != 0:
+                P[0][key] += P[i][key]
+        P[key] = torch.true_divide(P[key],client)
     return P
 
 def run(dataset, net, client):

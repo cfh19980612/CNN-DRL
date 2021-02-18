@@ -183,7 +183,7 @@ def Aggregate(model, client):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
-
+    Q = model[i].state_dict()
     # for key in P[0].keys():
     #     for i in range (client):
     #         if i != 0:
@@ -197,7 +197,7 @@ def Aggregate(model, client):
     #     P[key] = torch.true_divide(P[key],2)
     for key in P[0].keys():
         if key == 'layers.1.bn1.weight':
-            print(model[0][key])
+            print(Q[key])
     return P[0]
 
 

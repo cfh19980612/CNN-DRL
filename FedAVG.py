@@ -172,7 +172,7 @@ def Test(model, testloader):
         model.cpu()
     return accuracy, test_loss
 
-def Aggregate(model, client, i):
+def Aggregate(model, client):
     # P = []
     # for i in range (client):
     #     P.append(copy.deepcopy(model[i].state_dict()))
@@ -182,18 +182,12 @@ def Aggregate(model, client, i):
     #         if i != 0:
     #             P[0][key] += P[i][key]
     #     P[0][key] = torch.true_divide(P[0][key],client)
-    Q = []
-    P = copy.deepcopy(model[i].state_dict())
-    for j in range (client):
-        Q.append(copy.deepcopy(model[j].state_dict()))
-    for key, value in P.items():
-        m = 0
-        for j in range (2):
-            if i != j:
-                P[key] = P[key] + P[key]
-                m += 1
+
+    P = copy.deepcopy(model[0].state_dict())
+    for key in P.keys():
+        for i in range (2):
+            P[key] += P[key]
         P[key] = torch.true_divide(P[key],2)
-        # P[key] = P[key]/m+1
 
     return P
 
@@ -209,7 +203,7 @@ def run(dataset, net, client):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(model, client, 0))
+        global_model.load_state_dict(Aggregate(model, client))
         acc, loss = Test(global_model, testloader)
         start_time += process_time
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))

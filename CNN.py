@@ -55,10 +55,6 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
-
-#                     progress_bar(batch_idx, len(self.trainloader), 'Loss: %.3f | Acc: %.3f%% (%d/%d)'
-#                                 % (train_loss[client]/(batch_idx+1), 100.*correct[client]/total[client], correct[client], total[client]))
-
         if self.device == 'cuda':
             for i in range (Client):
                 Model[i].cpu()
@@ -79,7 +75,6 @@ class cnn(nn.Module):
             indx_target = target.clone()
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
-#             with torch.no_grad(data,target):
 
             output = model(data)
             test_loss += F.cross_entropy(output, target).data
@@ -107,7 +102,6 @@ class cnn(nn.Module):
             for j in range (Client):
                 if i != j:
                     if Imp[i,j] > 0:
-#                     P[key] = P[key] + (Imp[i,j]/Imp[i].sum())*Q[j][key]
                         P[key] = P[key] + Q[j][key]
                         m += 1
             P[key] = torch.true_divide(P[key],m+1)

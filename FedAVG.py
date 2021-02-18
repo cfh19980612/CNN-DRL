@@ -209,7 +209,7 @@ def run(dataset, net, client):
         Temp, process_time = Train(copy.deepcopy(model), optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_temp = MobileNet()
+        global_temp = ResNet18()
         global_temp.load_state_dict(Aggregate(copy.deepcopy(model), client))
         acc, loss = Test(global_temp, testloader)
         for j in range (client):

@@ -195,7 +195,9 @@ def Aggregate(model, client):
     # for key in P.keys():
     #     P[key] = Q[key] + P[key]
     #     P[key] = torch.true_divide(P[key],2)
-
+    for key in P[0].keys():
+        if key == 'layers.12.bn1.weight':
+            print(P[0][key])
     return P[0]
 
 
@@ -209,7 +211,7 @@ def run(dataset, net, client):
         Temp, process_time = Train(copy.deepcopy(model), optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_temp = ResNet18()
+        global_temp = MobileNet()
         global_temp.load_state_dict(Aggregate(copy.deepcopy(model), client))
         acc, loss = Test(global_temp, testloader)
         for j in range (client):
@@ -226,4 +228,4 @@ def run(dataset, net, client):
     dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
-    run(dataset = 'CIFAR10', net = 'ResNet18', client = 10)
+    run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)

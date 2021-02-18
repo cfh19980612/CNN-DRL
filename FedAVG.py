@@ -160,6 +160,7 @@ def Train(model, optimizer, client, trainloader):
     return P, (time_end-time_start)
 
 def Test(weight, testloader):
+    model = MobileNet()
     model.load_state_dict(weight)
     temp = weight
     for key in temp.keys():

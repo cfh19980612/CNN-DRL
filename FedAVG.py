@@ -201,11 +201,6 @@ def Aggregate(model, client):
                 P[0][key] =torch.add(P[0][key], P[i][key])
         P[0][key] = torch.true_divide(P[0][key],client)
 
-    # P = copy.deepcopy(model[0].state_dict())
-    # Q = copy.deepcopy(model[1].state_dict())
-    # for key in P.keys():
-    #     P[key] = P[key] + Q[key]
-    #     P[key] = torch.true_divide(P[key],2)
     for key in P[0].keys():
         if key == 'layers.1.bn1.weight':
             print('final: ',P[0][key][1])
@@ -223,7 +218,7 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         temp = Aggregate(copy.deepcopy(model), client)
-        global_model.load_state_dict(temp)
+        global_model.load_state_dict(model[0].state_dict())
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][1])

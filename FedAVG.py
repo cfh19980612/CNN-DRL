@@ -192,7 +192,7 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         global_model.load_state_dict(Aggregate(model, client))
-        acc, loss = Test(global_model, testloader)
+        acc, loss = Test(model[1], testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f" %(i, acc, loss))
         start_time += process_time
         X.append(start_time)

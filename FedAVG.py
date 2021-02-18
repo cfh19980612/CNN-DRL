@@ -204,4 +204,5 @@ def run(dataset, net, client):
     dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
     dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
 
-
+if __name__ == '__main__':
+    run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)

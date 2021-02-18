@@ -163,13 +163,15 @@ def Test(model, testloader):
     # cpu ? gpu
     model = model.to(device)
     P = model.state_dict()
-    model.train()
+    model.eval()
     test_loss = 0
     correct = 0
     for data, target in testloader:
         indx_target = target.clone()
         data, target = data.to(device), target.to(device)
-        output = model(data)
+        accuracy, loss = model.inference
+        with torch.no_grad():
+            output = model(data)
         test_loss += F.cross_entropy(output, target).data
         pred = output.data.max(1)[1]  # get the index of the max log-probability
         correct += pred.cpu().eq(indx_target).sum()

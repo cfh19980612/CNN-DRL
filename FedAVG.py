@@ -160,9 +160,14 @@ def Train(model, optimizer, client, trainloader):
     return P, (time_end-time_start)
 
 def Test(model, testloader):
+    temp = model.state_dict()
+    for key in temp.keys():
+        if key == 'layers.1.bn1.weight':
+            print('final_out_model: ',temp[key][0])
+
+
     # cpu ? gpu
     model = model.to(device)
-
     model.eval()
     test_loss = 0
     correct = 0

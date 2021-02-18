@@ -174,7 +174,8 @@ def Test(model, testloader):
 
 def Aggregate(model, client):
     P = []
-    P.append(copy.deepcopy(model[0].state_dict()))
+    for i in range (client):
+        P.append(copy.deepcopy(model[i].state_dict()))
     # for key in P.keys():
     #     P[key] += P[key]
     #     P[key] = torch.true_divide(P[key],2)

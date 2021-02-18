@@ -184,7 +184,7 @@ def Aggregate(model, client):
             if i != 0:
                 P[0][key] += P[i][key]
         P[0][key] = torch.true_divide(P[0][key],client)
-    return P
+    return P[0]
 
 def run(dataset, net, client):
     X, Y, Z = [], [], []

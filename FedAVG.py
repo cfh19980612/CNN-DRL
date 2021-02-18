@@ -189,11 +189,11 @@ def run(dataset, net, client):
     pbar = tqdm(range(args.epoch))
     start_time = 0
     for i in range (args.epoch):
-        Temp, process_time = Train(model, trainloader)
+        Temp, process_time = Train(model, client, trainloader)
         for i in range (client):
             model[i].load_state_dict(Temp[i])
         global_model.load_state_dict(Aggregate(model, client))
-        acc, loss = Test(global_model, client)
+        acc, loss = Test(global_model, testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f" %(i, acc, loss))
         start_time += process_time
         X.append(start_time)

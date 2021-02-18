@@ -221,8 +221,8 @@ def run(dataset, net, client):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-        temp = global_model.state_dict()
+        temp = Aggregate(copy.deepcopy(model), client)
+        global_model.load_state_dict(model[0])
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][0])

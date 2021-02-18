@@ -175,7 +175,7 @@ def Test(model, testloader):
         indx_target = target.clone()
         data, target = data.to(device), target.to(device)
         output = model(data)
-        test_loss += F.cross_entropy(output, target)
+        test_loss += F.cross_entropy(output, target).data
         pred = output.data.max(1)[1]  # get the index of the max log-probability
         correct += pred.cpu().eq(indx_target).sum()
     test_loss = test_loss / len(testloader) # average over number of mini-batch
@@ -208,7 +208,7 @@ def Aggregate(model, client):
     #     P[key] = torch.true_divide(P[key],2)
     for key in P[0].keys():
         if key == 'layers.1.bn1.weight':
-            print('final: ',P[0][key][0])
+            print('final: ',P[0][key][1])
     return P[0]
 
 

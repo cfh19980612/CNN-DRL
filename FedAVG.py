@@ -159,8 +159,9 @@ def Train(model, optimizer, client, trainloader):
 
     return P, (time_end-time_start)
 
-def Test(model, testloader):
-    temp = model.state_dict()
+def Test(weight, testloader):
+    model.load_state_dict(weight)
+    temp = weight
     for key in temp.keys():
         if key == 'layers.1.bn1.weight':
             print('final_out_model: ',temp[key][1])
@@ -222,7 +223,7 @@ def run(dataset, net, client):
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][1])
-        acc, loss = Test(copy.deepcopy(global_model), testloader)
+        acc, loss = Test(Aggregate(copy.deepcopy(model), client), testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())

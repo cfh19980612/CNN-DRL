@@ -49,7 +49,7 @@ def Set_dataset(dataset):
         trainset = torchvision.datasets.CIFAR10(
             root='/home/ICDCS/cifar-10-batches-py/', train=True, download=True, transform=transform_train)
         trainloader = torch.utils.data.DataLoader(
-            trainset, batch_size=128, shuffle=True, num_workers=2)
+            trainset, batch_size=256, shuffle=True, num_workers=2)
 
         testset = torchvision.datasets.CIFAR10(
             root='/home/ICDCS/cifar-10-batches-py/', train=False, download=True, transform=transform_test)
@@ -211,12 +211,13 @@ def run(dataset, net, client):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-        acc, loss = Test(global_model, testloader)
+        if i%2 == 0:
+            global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
+            acc, loss = Test(global_model, testloader)
+            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())
         start_time += process_time
-        pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         X.append(start_time)
         Y.append(acc)
         Z.append(loss)

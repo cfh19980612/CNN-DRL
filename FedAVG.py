@@ -131,19 +131,19 @@ def Train(model, optimizer, client, trainloader):
     time_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
             if batch_idx < 360:
-                client = (batch_idx % client)
-                model[client].train()
+                idx = (batch_idx % client)
+                model[idx].train()
                 inputs, targets = inputs.to(device), targets.to(device)
-                optimizer[client].zero_grad()
-                outputs = model[client](inputs)
-                Loss[client] = criterion(outputs, targets)
-                Loss[client].backward()
-                optimizer[client].step()
+                optimizer[idx].zero_grad()
+                outputs = model[idx](inputs)
+                Loss[idx] = criterion(outputs, targets)
+                Loss[idx].backward()
+                optimizer[idx].step()
 
-                train_loss[client] += Loss[client].item()
+                train_loss[client] += Loss[idx].item()
                 _, predicted = outputs.max(1)
-                total[client] += targets.size(0)
-                correct[client] += predicted.eq(targets).sum().item()
+                total[idx] += targets.size(0)
+                correct[idx] += predicted.eq(targets).sum().item()
     time_end = time.time()
     if self.device == 'cuda':
         for i in range (client):

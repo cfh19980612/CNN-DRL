@@ -99,17 +99,17 @@ def Set_dataset(dataset):
 
 def Set_model(net, client, args):
     print('==> Building model..')
-    Model = [None for i in range (Client)]
-    Optimizer = [None for i in range (Client)]
+    Model = [None for i in range (client)]
+    Optimizer = [None for i in range (client)]
     if net == 'MNISTNet':
-        for i in range (Client):
+        for i in range (client):
             Model[i] = MNISTNet()
             Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=args.lr,
                             momentum=0.9, weight_decay=5e-4)
         global_model = MNISTNet()
         return Model, global_model, Optimizer
     elif net == 'MobileNet':
-        for i in range (Client):
+        for i in range (client):
             Model[i] = MobileNet()
             Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=args.lr,
                         momentum=0.9, weight_decay=5e-4)
@@ -119,19 +119,19 @@ def Set_model(net, client, args):
 def Train(model, client, trainloader):
     criterion = nn.CrossEntropyLoss().to(device)
     # cpu ? gpu
-    for i in range(Client):
+    for i in range(client):
         model[i] = model[i].to(device)
-    P = [None for i in range (Client)]
+    P = [None for i in range (client)]
 
     # share a common dataset
-    train_loss = [0 for i in range (Client)]
-    correct = [0 for i in range (Client)]
-    total = [0 for i in range (Client)]
-    Loss = [0 for i in range (Client)]
+    train_loss = [0 for i in range (client)]
+    correct = [0 for i in range (client)]
+    total = [0 for i in range (client)]
+    Loss = [0 for i in range (client)]
     time_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
             if batch_idx < 360:
-                client = (batch_idx % Client)
+                client = (batch_idx % client)
                 model[client].train()
                 inputs, targets = inputs.to(device), targets.to(device)
                 Optimizer[client].zero_grad()
@@ -146,9 +146,9 @@ def Train(model, client, trainloader):
                 correct[client] += predicted.eq(targets).sum().item()
     time_end = time.time()
     if self.device == 'cuda':
-        for i in range (Client):
+        for i in range (client):
             model[i].cpu()
-    for i in range (Client):
+    for i in range (client):
         P[i] = copy.deepcopy(Model[i].state_dict())
 
     return P, (time_end-time_start)
@@ -176,7 +176,7 @@ def Test(model, testloader):
 def Aggregate(model, client):
     P = copy.deepcopy(model[0].state_dict())
     for key, value in P.items():
-        for i in range (1,Client,1):
+        for i in range (1,client,1):
             temp = copy.deepcopy(model[i].state_dict())
             P[key] = P[key] + temp[key]
         P[key] = torch.true_divide(P[key],client)

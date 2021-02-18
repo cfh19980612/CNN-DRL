@@ -67,7 +67,7 @@ class cnn(nn.Module):
     def CNN_test(self, model, testloader):
         # cpu ? gpu
         model = model.to(self.device)
-
+        model.without
         model.eval()
         test_loss = 0
         correct = 0
@@ -75,8 +75,8 @@ class cnn(nn.Module):
             indx_target = target.clone()
             if self.device == 'cuda':
                 data, target = data.cuda(), target.cuda()
-
-            output = model(data)
+            with torch.no_grad():
+                output = model(data)
             test_loss += F.cross_entropy(output, target).data
             pred = output.data.max(1)[1]  # get the index of the max log-probability
             correct += pred.cpu().eq(indx_target).sum()
@@ -130,7 +130,7 @@ class cnn(nn.Module):
 
     # to CSV
     def toCsv(self, times, score, loss, i_episode):
-        location = '/home/CIFAR10/Test_data/test' + str(i_episode) + '.csv'
+        location = '/home/CIFAR10/Test_data/test_new_' + str(i_episode) + '.csv'
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
         dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)

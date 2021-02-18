@@ -160,7 +160,6 @@ def Train(model, optimizer, client, trainloader):
     return P, (time_end-time_start)
 
 def Test(model, testloader):
-
     # cpu ? gpu
     model = model.to(device)
     P = model.state_dict()
@@ -176,7 +175,6 @@ def Test(model, testloader):
         correct += pred.cpu().eq(indx_target).sum()
     test_loss = test_loss / len(testloader) # average over number of mini-batch
     accuracy = float(correct / len(testloader.dataset))
-    print (accuracy)
     if device == 'cuda':
         model.cpu()
     return accuracy, test_loss

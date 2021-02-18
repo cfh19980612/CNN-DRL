@@ -164,10 +164,10 @@ def Test(model, testloader):
     # cpu ? gpu
     model = model.to(device)
     P = model.state_dict()
+    model.eval()
     for key in P.keys():
         if key == 'layers.1.bn1.weight':
             print('test: ',P[key][1])
-    model.eval()
     test_loss = 0
     correct = 0
     for data, target in testloader:

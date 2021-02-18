@@ -183,10 +183,10 @@ def Aggregate(model, client):
     return P
 
 def run(dataset, net, client):
+    X, Y, Z = [], [], []
     args, trainloader, testloader = Set_dataset(dataset)
     model, global_model, optimizer = Set_model(net, client, args)
-    pbar = tqdm(range(args.epoch)
-    X, Y, Z = [], [], []
+    pbar = tqdm(range(args.epoch))
     start_time = 0
     for i in range (args.epoch):
         Temp, process_time = Train(model, trainloader)

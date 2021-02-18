@@ -190,7 +190,7 @@ def Aggregate(model, client, i):
         m = 0
         for j in range (client):
             if i != j:
-                P[key] = P[key] + Q[j][key]
+                P[key] = P[key] + P[key]
                 m += 1
         P[key] = torch.true_divide(P[key],m+1)
         # P[key] = P[key]/m+1

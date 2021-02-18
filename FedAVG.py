@@ -180,6 +180,7 @@ def Test(model, testloader):
         correct += pred.cpu().eq(indx_target).sum()
     test_loss = test_loss / len(testloader) # average over number of mini-batch
     accuracy = float(correct / len(testloader.dataset))
+    print (accuracy)
     if device == 'cuda':
         model.cpu()
     return accuracy, test_loss
@@ -197,7 +198,7 @@ def Aggregate(model, client):
     for key in P[0].keys():
         for i in range (client):
             if i != 0:
-                P[0][key] += P[i][key]
+                P[0][key] =torch.add(P[0][key], P[i][key])
         P[0][key] = torch.true_divide(P[0][key],client)
 
     # P = copy.deepcopy(model[0].state_dict())
@@ -226,7 +227,7 @@ def run(dataset, net, client):
         for key in temp.keys():
             if key == 'layers.1.bn1.weight':
                 print('final_out: ',temp[key][0])
-        acc, loss = Test(global_model, testloader)
+        acc, loss = Test(copy.deepcopy(global_model), testloader)
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())

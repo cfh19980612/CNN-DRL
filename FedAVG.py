@@ -197,7 +197,7 @@ def Aggregate(model, client):
     #     P[key] = torch.true_divide(P[key],2)
     for key in P[0].keys():
         if key == 'layers.1.bn1.weight':
-            print(P[2][key])
+            print(model[0][key])
     return P[0]
 
 

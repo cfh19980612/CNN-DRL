@@ -180,25 +180,25 @@ def Test(model, testloader):
     return accuracy, test_loss
 
 def Aggregate(model, client):
-    P = []
-    for i in range (client):
-        P.append(copy.deepcopy(model[i].state_dict()))
-    Q = model[i].state_dict()
+    # P = []
+    # for i in range (client):
+    #     P.append(copy.deepcopy(model[i].state_dict()))
+    # Q = model[i].state_dict()
     # for key in P[0].keys():
     #     for i in range (client):
     #         if i != 0:
     #             P[0][key] += P[i][key]
     #     P[0][key] = torch.true_divide(P[0][key],client)
 
-    # P = copy.deepcopy(model[0].state_dict())
-    # Q = copy.deepcopy(model[1].state_dict())
-    # for key in P.keys():
-    #     P[key] = Q[key] + P[key]
-    #     P[key] = torch.true_divide(P[key],2)
+    P = copy.deepcopy(model[0].state_dict())
+    Q = copy.deepcopy(model[1].state_dict())
+    for key in P.keys():
+        P[key] = P[key] + P[key]
+        P[key] = torch.true_divide(P[key],2)
     for key in P[0].keys():
         if key == 'layers.1.bn1.weight':
-            print(Q[key])
-    return P[0]
+            print(P[key])
+    return P
 
 
 def run(dataset, net, client):

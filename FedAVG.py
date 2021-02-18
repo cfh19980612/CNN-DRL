@@ -174,11 +174,11 @@ def Test(model, testloader):
 
 def Aggregate(model, client):
     P = model[0]
-    for key, value in P.items():
-        for i in range (1,client):
-            temp = model[i]
-            P[key] = P[key] + temp[key]
-        P[key] = torch.div(P[key],client)
+    # for key, value in P.items():
+    #     for i in range (1,client):
+    #         temp = model[i]
+    #         P[key] = P[key] + temp[key]
+    #     P[key] = torch.div(P[key],client)
     return P
 
 def run(dataset, net, client):

@@ -188,6 +188,7 @@ def Aggregate(model, client):
     for key in P.keys():
         Q[key] += P[key]
         Q[key] = torch.true_divide(Q[key],2)
+        print (Q[key])
 
     return Q
 
@@ -204,6 +205,8 @@ def run(dataset, net, client):
             model[j].load_state_dict(Temp[j])
         global_model.load_state_dict(Aggregate(model, client))
         acc, loss = Test(global_model, testloader)
+        for i in range (client):
+            model[j].load_state_dict(global_model.state_dict())
         start_time += process_time
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         X.append(start_time)

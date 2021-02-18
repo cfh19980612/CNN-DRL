@@ -26,7 +26,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 def Set_dataset(dataset):
     if dataset == 'CIFAR10':
         parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
-        parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+        parser.add_argument('--lr', default=0.1, type=float, help='learning rate')
         parser.add_argument('--resume', '-r', action='store_true',
                             help='resume from checkpoint')
         parser.add_argument('--epoch',default=100,type=int,help='epoch')
@@ -183,12 +183,11 @@ def Aggregate(model, client):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
-    # Q = model[i].state_dict()
-    # for key in P[0].keys():
-    #     for i in range (client):
-    #         if i != 0:
-    #             P[0][key] += P[i][key]
-    #     P[0][key] = torch.true_divide(P[0][key],client)
+    for key in P[0].keys():
+        for i in range (client):
+            if i != 0:
+                P[0][key] += P[i][key]
+        P[0][key] = torch.true_divide(P[0][key],client)
 
     # P = copy.deepcopy(model[0].state_dict())
     # Q = copy.deepcopy(model[1].state_dict())
@@ -213,7 +212,7 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(Temp[j])
         global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-        acc, loss = Test(model[0], testloader)
+        acc, loss = Test(global_model, testloader)
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())
         start_time += process_time

@@ -73,7 +73,7 @@ class cnn(nn.Module):
         for data, target in testloader:
             indx_target = target.clone()
             if self.device == 'cuda':
-                data, target = data.to(device), target.to(device)
+                data, target = data.to(self.device), target.to(self.device)
             with torch.no_grad():
                 output = model(data)
             test_loss += F.cross_entropy(output, target).data

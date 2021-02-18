@@ -115,6 +115,13 @@ def Set_model(net, client, args):
                         momentum=0.9, weight_decay=5e-4)
         global_model = MobileNet()
         return Model, global_model, Optimizer
+    elif net == 'ResNet18':
+        for i in range (client):
+            Model[i] = ResNet18()
+            Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=args.lr,
+                        momentum=0.9, weight_decay=5e-4)
+        global_model = ResNet18()
+        return Model, global_model, Optimizer
 
 def Train(model, optimizer, client, trainloader):
     criterion = nn.CrossEntropyLoss().to(device)
@@ -219,4 +226,4 @@ def run(dataset, net, client):
     dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
-    run(dataset = 'CIFAR10', net = 'MNISTNet', client = 10)
+    run(dataset = 'CIFAR10', net = 'ResNet18', client = 10)

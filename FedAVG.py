@@ -49,7 +49,7 @@ def Set_dataset(dataset):
         trainset = torchvision.datasets.CIFAR10(
             root='/home/ICDCS/cifar-10-batches-py/', train=True, download=True, transform=transform_train)
         trainloader = torch.utils.data.DataLoader(
-            trainset, batch_size=256, shuffle=True, num_workers=2)
+            trainset, batch_size=128, shuffle=True, num_workers=2)
 
         testset = torchvision.datasets.CIFAR10(
             root='/home/ICDCS/cifar-10-batches-py/', train=False, download=True, transform=transform_test)
@@ -183,6 +183,12 @@ def Aggregate(model, client):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
+
+    for i in range (client):
+        for key in P[0].keys():
+            if key == 'layers.1.bn1.weight':
+                print(P[i][key][0])
+
     for key in P[0].keys():
         for i in range (client):
             if i != 0:
@@ -196,8 +202,7 @@ def Aggregate(model, client):
     #     P[key] = torch.true_divide(P[key],2)
     for i in range (client):
         for key in P[0].keys():
-            if key == 'layers.1.bn1.weight':
-                print(P[i][key][0])
+            print(P[0][key][0])
     return P[0]
 
 
@@ -211,10 +216,9 @@ def run(dataset, net, client):
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        if i%2 == 0:
-            global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-            acc, loss = Test(global_model, testloader)
-            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
+        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
+        acc, loss = Test(global_model, testloader)
+        pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
         # for j in range (client):
         #     model[j].load_state_dict(global_temp.state_dict())
         start_time += process_time

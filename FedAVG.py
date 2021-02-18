@@ -191,7 +191,6 @@ def Aggregate(model, client):
 
     return P
 
-    return Q
 
 def run(dataset, net, client):
     X, Y, Z = [], [], []

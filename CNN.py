@@ -32,10 +32,13 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss().to(self.device)
 
         # cpu ? gpu
-        if next(model.parameters()).device != 'cuda:0':
+        if next(Model[0].parameters()).device != 'cuda:0':
+            print('model in CPU')
             if self.device == 'cuda':
                 for i in range(Client):
                     Model[i] = Model[i].to(self.device)
+        if next(Model[0].parameters()).device == 'cuda:0':
+            print('model in GPU')
 
         P = [None for i in range (Client)]
 
@@ -50,8 +53,11 @@ class cnn(nn.Module):
                     client = (batch_idx % Client)
                     Model[client].train()
                     if input.device !='cuda:0':
+                        print('data in CPU')
                         if self.device == 'cuda':
                             inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    if input.device =='cuda:0':
+                        print('data in GPU')
                     Optimizer[client].zero_grad()
                     outputs = Model[client](inputs)
                     Loss[client] = criterion(outputs, targets)

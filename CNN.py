@@ -140,3 +140,4 @@ class cnn(nn.Module):
         # dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
         # dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
         # dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
+        print('complete!')

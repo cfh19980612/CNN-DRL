@@ -56,7 +56,7 @@ class cnn(nn.Module):
                         print('data in CPU')
                         if self.device == 'cuda':
                             inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    if input.device =='cuda:0':
+                    if inputs.device =='cuda:0':
                         print('data in GPU')
                     Optimizer[client].zero_grad()
                     outputs = Model[client](inputs)

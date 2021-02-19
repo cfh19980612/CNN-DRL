@@ -13,14 +13,14 @@ plt.title('Comparasion')
 plt.legend()
 
 plt.savefig("/home/cifar-gcn-drl/Fig/Accuracy.eps")
-
+plt.show()
 
 
 # loss
 x2, y2 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv',delimiter=',',unpack = True)
 
 
-plt.plot(x1,y1, [0.75,0.24,1], label = 'FedAVG')
+plt.plot(x2,y2, [0.75,0.24,1], label = 'FedAVG')
 plt.xlabel('Time')
 plt.ylabel('Loss')
 plt.title('Comparasion')

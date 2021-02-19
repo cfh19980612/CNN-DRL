@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import csv
 
 File = open('/home/cifar-gcn-drl/Test_data/FedAVG.csv')  # 打开csv文件
 Reader = csv.reader(File)  # 读取csv文件

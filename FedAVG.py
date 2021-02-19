@@ -125,7 +125,7 @@ def Set_model(net, client, args):
 
 def Train(model, optimizer, client, trainloader):
     criterion = nn.CrossEntropyLoss().to(device)
-    print(next(model.parameters()).is_cuda)
+    print(next(model[0].parameters()).is_cuda)
     # cpu ? gpu
     for i in range(client):
         model[i] = model[i].to(device)

@@ -178,7 +178,8 @@ def Test(model, testloader):
     accuracy = float(correct / len(testloader.dataset))
     if device == 'cuda':
         model.cpu()
-    return accuracy, test_loss
+    print (test_loss.data,test_loss.item())
+    return accuracy, test_loss.data
 
 def Aggregate(model, client):
     P = []

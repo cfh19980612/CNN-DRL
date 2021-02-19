@@ -69,12 +69,12 @@ class FedEnv(gym.Env):
             trainset = torchvision.datasets.CIFAR10(
                 root='/home/ICDCS/cifar-10-batches-py/', train=True, download=True, transform=transform_train)
             trainloader = torch.utils.data.DataLoader(
-                trainset, batch_size=128, shuffle=True, num_workers=2).to('cuda')
+                trainset, batch_size=128, shuffle=True, num_workers=4).to('cuda')
 
             testset = torchvision.datasets.CIFAR10(
                 root='/home/ICDCS/cifar-10-batches-py/', train=False, download=True, transform=transform_test)
             testloader = torch.utils.data.DataLoader(
-                testset, batch_size=100, shuffle=False, num_workers=2)
+                testset, batch_size=100, shuffle=False, num_workers=4)
 
             classes = ('plane', 'car', 'bird', 'cat', 'deer',
                     'dog', 'frog', 'horse', 'ship', 'truck')
@@ -104,7 +104,7 @@ class FedEnv(gym.Env):
             # load dataset with batch=64
             trainloader = torch.utils.data.DataLoader(dataset=trainset,
                                                 batch_size = 64,
-                                                shuffle = True).to('cuda')
+                                                shuffle = True)
 
             testset = torchvision.datasets.MNIST(root="./data/",
                            transform = transform,

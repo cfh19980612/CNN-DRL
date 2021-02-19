@@ -33,12 +33,9 @@ class cnn(nn.Module):
 
         # cpu ? gpu
         if next(Model[0].parameters()).device != 'cuda:0':
-            print('model in CPU')
             if self.device == 'cuda':
                 for i in range(Client):
                     Model[i] = Model[i].to(self.device)
-        if next(Model[0].parameters()).device == 'cuda:0':
-            print('model in GPU')
 
         P = [None for i in range (Client)]
 

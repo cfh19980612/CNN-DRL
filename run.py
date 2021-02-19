@@ -34,9 +34,7 @@ if __name__ == '__main__':
 
         for i in pbar:
             action = agent.act(state)
-            print('Start a step!!')
             time, accuracy, test_loss, next_state, reward = env.step(action,i)
-            print('End a step!!')
             # save accuracy
             start_time += time
             X.append(start_time)

@@ -147,7 +147,7 @@ class FedEnv(gym.Env):
         Tim, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
 
-        P = self.task.CNN_processes(self.Model, self.Optimizer, self.client, self.trainloader)
+        P, time = self.task.CNN_processes(self.Model, self.Optimizer, self.client, self.trainloader)
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
@@ -198,7 +198,7 @@ class FedEnv(gym.Env):
         state = state.flatten()
         # self.toCsv(times,score)
         reward = pow(64, accuracy-0.85)-1
-        return t, accuracy, test_loss, state, reward
+        return time, accuracy, test_loss, state, reward, time
 
 
 

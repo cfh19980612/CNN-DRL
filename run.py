@@ -47,7 +47,7 @@ if __name__ == '__main__':
             # end?
             if accuracy >= 0.95:
                 break
-            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Reward: %.3f" %(i, accuracy, test_loss, reward))
+            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Reward: %.3f Time: %.3f" %(i, accuracy, test_loss, reward, start_time))
 
         # save accuracy
         env.save_acc(X,Y,Z,i_episode)

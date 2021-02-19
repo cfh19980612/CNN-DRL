@@ -9,6 +9,7 @@ import random
 import copy
 import pandas as pd
 import numpy as np
+import time
 from utils import progress_bar
 from multiprocessing import Pool
 import queue
@@ -40,6 +41,7 @@ class cnn(nn.Module):
         correct = [0 for i in range (Client)]
         total = [0 for i in range (Client)]
         Loss = [0 for i in range (Client)]
+        start_time = time.time()
         for batch_idx, (inputs, targets) in enumerate(trainloader):
                 if batch_idx < 360:
                     client = (batch_idx % Client)
@@ -55,13 +57,14 @@ class cnn(nn.Module):
                     _, predicted = outputs.max(1)
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
+        end_time = time.time()
         if self.device == 'cuda':
             for i in range (Client):
                 Model[i].cpu()
         for i in range (Client):
             P[i] = copy.deepcopy(Model[i].state_dict())
 
-        return P
+        return P, end_time - start_time
 
     # CNN_test
     def CNN_test(self, model, testloader):
@@ -98,12 +101,15 @@ class cnn(nn.Module):
             Q.append(copy.deepcopy(Model[j].state_dict()))
         for key, value in P.items():
             m = 0
+            n = 0
             for j in range (Client):
                 if i != j:
                     if Imp[i,j] > 0:
-                        P[key] = P[key] + Q[j][key]
-                        m += 1
-            P[key] = torch.true_divide(P[key],m+1)
+                        # P[key] = P[key] + Imp[i,j]*Q[j][key]
+                        m += Imp[i,j]*Q[j][key]
+                        n += Imp[i,j]
+            m = torch.true_divide(m,n)
+            P[key] = torch.true_divide(P[key]+m,2)
             # P[key] = P[key]/m+1
 
         for j in range (Client):
@@ -129,8 +135,8 @@ class cnn(nn.Module):
 
     # to CSV
     def toCsv(self, times, score, loss, i_episode):
-        location = '/home/CIFAR10/Test_data/test_new_' + str(i_episode) + '.csv'
-        dataframe = pd.DataFrame(times, columns=['X'])
-        dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
-        dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
+        # location = '/home/CIFAR10/Test_data/test_new_' + str(i_episode) + '.csv'
+        # dataframe = pd.DataFrame(times, columns=['X'])
+        # dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
+        # dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
+        # dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')

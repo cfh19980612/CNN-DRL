@@ -23,4 +23,4 @@ plt.ylabel('Accuracy')
 plt.title('Comparasion')
 plt.legend()
 
-plt.savefig("Accuracy.eps")
+plt.savefig("/Fig/Accuracy.eps")

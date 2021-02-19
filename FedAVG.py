@@ -198,7 +198,7 @@ def run(dataset, net, client):
     model, global_model, optimizer = Set_model(net, client, args)
     pbar = tqdm(range(args.epoch))
     start_time = 0
-    for i in range (args.epoch):
+    for i in pbar:
         Temp, process_time = Train(model, optimizer, client, trainloader)
         for j in range (client):
             model[j].load_state_dict(Temp[j])

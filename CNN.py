@@ -52,12 +52,12 @@ class cnn(nn.Module):
                 if batch_idx < 36:
                     client = (batch_idx % Client)
                     Model[client].train()
-                    if inputs.device !='cuda:0':
-                        print('data in CPU')
-                        if self.device == 'cuda':
-                            inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    if inputs.device =='cuda:0':
-                        print('data in GPU')
+                    # if inputs.device !='cuda:0':
+                    #     print('data in CPU')
+                    #     if self.device == 'cuda':
+                    #         inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    # if inputs.device =='cuda:0':
+                    #     print('data in GPU')
                     Optimizer[client].zero_grad()
                     outputs = Model[client](inputs)
                     Loss[client] = criterion(outputs, targets)

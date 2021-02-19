@@ -146,17 +146,18 @@ class FedEnv(gym.Env):
 
         Tim, accuracy_list = [], []
         # Loss = [0 for i in range (Client)]
-
+        print('Training start!')
         P, time = self.task.CNN_processes(self.Model, self.Optimizer, self.client, self.trainloader)
 
         for i in range (self.client):
             self.Model[i].load_state_dict(P[i])
 
+        print('Global aggregate start!')
         # global model
         self.global_model.load_state_dict(self.task.Global_agg(self.client, self.Model))
-
+        print('Testing start!')
         accuracy, test_loss = self.task.CNN_test(self.global_model,self.testloader)
-
+        print('Local aggregate start!')
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood
         # Step 2: aggregate the model from neighborhood
@@ -172,7 +173,7 @@ class FedEnv(gym.Env):
 
         t = self.task.step_time(Tim)
 
-
+        print('PCA start!')
         # PCA
         parm_local = {}
         S_local = [None for i in range (self.client)]

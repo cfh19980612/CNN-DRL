@@ -212,9 +212,9 @@ def run(dataset, net, client):
         Y.append(acc)
         Z.append(loss)
     location = '/home/cifar-gcn-drl/Test_data/FedAVG.csv'
-    dataframe = pd.DataFrame(times, columns=['X'])
-    dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-    dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
+    dataframe = pd.DataFrame(X, columns=['X'])
+    dataframe = pd.concat([dataframe, pd.DataFrame(Y,columns=['Y'])],axis=1)
+    dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
     dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':

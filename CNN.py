@@ -28,51 +28,40 @@ class cnn(nn.Module):
 
     # multiple processes to train CNN models
     def CNN_processes(self, Model, Optimizer, Client, trainloader):
-        # loss func
         criterion = nn.CrossEntropyLoss().to(self.device)
-
         # cpu ? gpu
-        if next(Model[0].parameters()).device != 'cuda:0':
-            if self.device == 'cuda':
-                for i in range(Client):
-                    Model[i] = Model[i].to(self.device)
-
-        P = [None for i in range (Client)]
+        for i in range(client):
+            Model[i] = Model[i].to(self.device)
+        P = [None for i in range (client)]
 
         # share a common dataset
-        train_loss = [0 for i in range (Client)]
-        correct = [0 for i in range (Client)]
-        total = [0 for i in range (Client)]
-        Loss = [0 for i in range (Client)]
-        start_time = time.time()
+        train_loss = [0 for i in range (client)]
+        correct = [0 for i in range (client)]
+        total = [0 for i in range (client)]
+        Loss = [0 for i in range (client)]
+        time_start = time.time()
         for batch_idx, (inputs, targets) in enumerate(trainloader):
                 if batch_idx < 360:
-                    client = (batch_idx % Client)
-                    Model[client].train()
-                    # if inputs.device !='cuda:0':
-                    #     print('data in CPU')
-                    #     if self.device == 'cuda':
+                    idx = (batch_idx % client)
+                    Model[idx].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
-                    # if inputs.device =='cuda:0':
-                    #     print('data in GPU')
-                    Optimizer[client].zero_grad()
-                    outputs = Model[client](inputs)
-                    Loss[client] = criterion(outputs, targets)
-                    Loss[client].backward()
-                    Optimizer[client].step()
-
-                    train_loss[client] += Loss[client].item()
+                    optimizer[idx].zero_grad()
+                    outputs = Model[idx](inputs)
+                    Loss[idx] = criterion(outputs, targets)
+                    Loss[idx].backward()
+                    optimizer[idx].step()
+                    train_loss[idx] += Loss[idx].item()
                     _, predicted = outputs.max(1)
-                    total[client] += targets.size(0)
-                    correct[client] += predicted.eq(targets).sum().item()
-        end_time = time.time()
+                    total[idx] += targets.size(0)
+                    correct[idx] += predicted.eq(targets).sum().item()
+        time_end = time.time()
         if self.device == 'cuda':
-            for i in range (Client):
+            for i in range (client):
                 Model[i].cpu()
-        for i in range (Client):
+        for i in range (client):
             P[i] = copy.deepcopy(Model[i].state_dict())
 
-        return P, end_time - start_time
+        return P, (time_end-time_start)
 
     # CNN_test
     def CNN_test(self, model, testloader):

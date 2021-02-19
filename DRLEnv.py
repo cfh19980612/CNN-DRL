@@ -198,7 +198,7 @@ class FedEnv(gym.Env):
         state = state.flatten()
         # self.toCsv(times,score)
         reward = pow(64, accuracy-0.5)-1
-        return time, accuracy, test_loss, state, reward, time
+        return time, accuracy, test_loss, state, reward
 
 
 

@@ -66,9 +66,9 @@ class cnn(nn.Module):
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
         end_time = time.time()
-        # if self.device == 'cuda':
-        #     for i in range (Client):
-        #         Model[i].cpu()
+        if self.device == 'cuda':
+            for i in range (Client):
+                Model[i].cpu()
         for i in range (Client):
             P[i] = copy.deepcopy(Model[i].state_dict())
 
@@ -102,7 +102,6 @@ class cnn(nn.Module):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
         # print ('P: ', p)
-        Model[i].cpu()
         time = 0
         Q = []
         P = copy.deepcopy(Model[i].state_dict())

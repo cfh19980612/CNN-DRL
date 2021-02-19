@@ -32,8 +32,11 @@ class cnn(nn.Module):
         criterion = nn.CrossEntropyLoss().to(self.device)
 
         # cpu ? gpu
-        for i in range(Client):
-            Model[i] = Model[i].to(self.device)
+        if next(model.parameters()).device != 'cuda:0':
+            if self.device == 'cuda':
+                for i in range(Client):
+                    Model[i] = Model[i].to(self.device)
+
         P = [None for i in range (Client)]
 
         # share a common dataset
@@ -46,7 +49,9 @@ class cnn(nn.Module):
                 if batch_idx < 36:
                     client = (batch_idx % Client)
                     Model[client].train()
-                    inputs, targets = inputs.to(self.device), targets.to(self.device)
+                    if input.device !='cuda:0':
+                        if self.device == 'cuda':
+                            inputs, targets = inputs.to(self.device), targets.to(self.device)
                     Optimizer[client].zero_grad()
                     outputs = Model[client](inputs)
                     Loss[client] = criterion(outputs, targets)
@@ -58,9 +63,9 @@ class cnn(nn.Module):
                     total[client] += targets.size(0)
                     correct[client] += predicted.eq(targets).sum().item()
         end_time = time.time()
-        if self.device == 'cuda':
-            for i in range (Client):
-                Model[i].cpu()
+        # if self.device == 'cuda':
+        #     for i in range (Client):
+        #         Model[i].cpu()
         for i in range (Client):
             P[i] = copy.deepcopy(Model[i].state_dict())
 

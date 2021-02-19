@@ -46,7 +46,7 @@ class cnn(nn.Module):
         Loss = [0 for i in range (Client)]
         start_time = time.time()
         for batch_idx, (inputs, targets) in enumerate(trainloader):
-                if batch_idx < 36:
+                if batch_idx < 360:
                     client = (batch_idx % Client)
                     Model[client].train()
                     # if inputs.device !='cuda:0':
@@ -144,9 +144,8 @@ class cnn(nn.Module):
 
     # to CSV
     def toCsv(self, times, score, loss, i_episode):
-        # location = '/home/CIFAR10/Test_data/test_new_' + str(i_episode) + '.csv'
-        # dataframe = pd.DataFrame(times, columns=['X'])
-        # dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
-        # dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
-        # dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
-        print('complete!')
+        location = '/home/cifar-gcn-drl/Test_data/test_new_' + str(i_episode) + '.csv'
+        dataframe = pd.DataFrame(times, columns=['X'])
+        dataframe = pd.concat([dataframe, pd.DataFrame(score,columns=['Y'])],axis=1)
+        dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Z'])],axis=1)
+        dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')

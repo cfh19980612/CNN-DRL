@@ -138,7 +138,6 @@ class FedEnv(gym.Env):
             return Model, global_model, Optimizer
 
 
-
     def step(self, action, epoch):
 
         # # GAT network
@@ -198,9 +197,8 @@ class FedEnv(gym.Env):
         state = self.pca.fit_transform(S)
         state = state.flatten()
         # self.toCsv(times,score)
-        reward = pow(64, accuracy-0.5)-1
+        reward = pow(64, accuracy-0.9)-1
         return time, accuracy, test_loss, state, reward
-
 
 
     def reset(self, Tag):
@@ -231,12 +229,6 @@ class FedEnv(gym.Env):
             self.pca.fit(S)
         state = self.pca.fit_transform(S)
         state = state.flatten()
-#             print('without flatten: ',S_local[i].shape)
-#             S_local[i] = S_local[i].flatten().reshape(1,-1)
-#             print('without pca: ',S_local[i].shape)
-#             S_local[i] = pca.fit(S_local[i])
-#             print('with pca: ',S_local[i].shape)
-#         s = np.array(S_local).flatten()
 
 
         return state

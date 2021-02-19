@@ -30,19 +30,19 @@ class cnn(nn.Module):
     def CNN_processes(self, Model, Optimizer, Client, trainloader):
         criterion = nn.CrossEntropyLoss().to(self.device)
         # cpu ? gpu
-        for i in range(client):
+        for i in range(Client):
             Model[i] = Model[i].to(self.device)
-        P = [None for i in range (client)]
+        P = [None for i in range (Client)]
 
         # share a common dataset
-        train_loss = [0 for i in range (client)]
-        correct = [0 for i in range (client)]
-        total = [0 for i in range (client)]
-        Loss = [0 for i in range (client)]
+        train_loss = [0 for i in range (Client)]
+        correct = [0 for i in range (Client)]
+        total = [0 for i in range (Client)]
+        Loss = [0 for i in range (Client)]
         time_start = time.time()
         for batch_idx, (inputs, targets) in enumerate(trainloader):
                 if batch_idx < 360:
-                    idx = (batch_idx % client)
+                    idx = (batch_idx % Client)
                     Model[idx].train()
                     inputs, targets = inputs.to(self.device), targets.to(self.device)
                     optimizer[idx].zero_grad()
@@ -56,9 +56,9 @@ class cnn(nn.Module):
                     correct[idx] += predicted.eq(targets).sum().item()
         time_end = time.time()
         if self.device == 'cuda':
-            for i in range (client):
+            for i in range (Client):
                 Model[i].cpu()
-        for i in range (client):
+        for i in range (Client):
             P[i] = copy.deepcopy(Model[i].state_dict())
 
         return P, (time_end-time_start)

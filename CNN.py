@@ -127,7 +127,8 @@ class cnn(nn.Module):
 
     # Global aggregate
     def Global_agg(self, Client, Model):
-
+        for i in range (Client):
+            Model[i].to(self.device)
         P = copy.deepcopy(Model[0].state_dict())
         for key, value in P.items():
             for i in range (1,Client,1):

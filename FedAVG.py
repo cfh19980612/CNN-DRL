@@ -211,9 +211,13 @@ def run(dataset, net, client):
         X.append(start_time)
         Y.append(acc)
         Z.append(loss)
-    location = '/home/cifar-gcn-drl/Test_data/FedAVG.csv'
+    location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv'
+    dataframe_1 = pd.DataFrame(X, columns=['X'])
+    dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
+    dataframe_1.to_csv(location,mode = 'w', header = False,index=False,sep=',')
+
+    location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv'
     dataframe = pd.DataFrame(X, columns=['X'])
-    dataframe = pd.concat([dataframe, pd.DataFrame(Y,columns=['Y'])],axis=1)
     dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
     dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
 

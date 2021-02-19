@@ -52,7 +52,7 @@ class cnn(nn.Module):
                 if batch_idx < 36:
                     client = (batch_idx % Client)
                     Model[client].train()
-                    if input.device !='cuda:0':
+                    if inputs.device !='cuda:0':
                         print('data in CPU')
                         if self.device == 'cuda':
                             inputs, targets = inputs.to(self.device), targets.to(self.device)

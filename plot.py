@@ -5,15 +5,15 @@ import csv
 # accuracy
 x1, y1 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv',delimiter=',',unpack = True)
 
-
+plt.cla()
 plt.plot(x1,y1, [0.1,0.53,0.93], label = 'FedAVG')
 plt.xlabel('Time')
 plt.ylabel('Accuracy')
 plt.title('Comparasion')
 plt.legend()
-
-plt.savefig("/home/cifar-gcn-drl/Fig/Accuracy.eps")
-plt.show()
+fig = plt.gcf()
+fig.savefig("/home/cifar-gcn-drl/Fig/Accuracy.eps")
+plt.cla()
 
 
 # loss
@@ -25,5 +25,5 @@ plt.xlabel('Time')
 plt.ylabel('Loss')
 plt.title('Comparasion')
 plt.legend()
-
-plt.savefig("/home/cifar-gcn-drl/Fig/Loss.eps")
+fig1 = plt.gcf()
+fig1.savefig("/home/cifar-gcn-drl/Fig/Loss.eps")

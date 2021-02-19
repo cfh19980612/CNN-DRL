@@ -23,4 +23,4 @@ plt.ylabel('Accuracy')
 plt.title('Comparasion')
 plt.legend()
 
-plt.savefig("/Fig/Accuracy.png")
+plt.savefig("/home/cifar-gcn-drl/Fig/Accuracy.png")

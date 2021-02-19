@@ -136,9 +136,9 @@ class cnn(nn.Module):
         location_acc = '/home/cifar-gcn-drl/Test_data/test_acc_' + str(i_episode) + '.csv'
         dataframe_1 = pd.DataFrame(times, columns=['X'])
         dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(score,columns=['Y'])],axis=1)
-        dataframe_1.to_csv(location,mode = 'w', header = False,index=False,sep=',')
+        dataframe_1.to_csv(location_acc,mode = 'w', header = False,index=False,sep=',')
 
         location_loss = '/home/cifar-gcn-drl/Test_data/test_loss_' + str(i_episode) + '.csv'
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Y'])],axis=1)
-        dataframe.to_csv(location,mode = 'w', header = False,index=False,sep=',')
+        dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')

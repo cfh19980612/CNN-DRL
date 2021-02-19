@@ -102,6 +102,7 @@ class cnn(nn.Module):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
         # print ('P: ', p)
+        Model[i].cpu()
         time = 0
         Q = []
         P = copy.deepcopy(Model[i].state_dict())
@@ -117,7 +118,6 @@ class cnn(nn.Module):
                         m += Imp[i,j]*Q[j][key]
                         n += Imp[i,j]
             m = torch.true_divide(m,n)
-            m.to(device)
             P[key] = torch.true_divide(P[key]+m,2)
             # P[key] = P[key]/m+1
 

@@ -13,7 +13,7 @@ plt.ylabel('Accuracy')
 plt.title('Comparasion')
 plt.legend()
 fig = plt.gcf()
-fig.savefig("/home/cifar-gcn-drl/Fig/Accuracy.png")
+fig.savefig("/home/cifar-gcn-drl/Fig/Accuracy.eps")
 plt.cla()
 
 

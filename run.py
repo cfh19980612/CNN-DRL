@@ -30,7 +30,7 @@ if __name__ == '__main__':
 
         reward_y = []
         episode_x = []
-        pbar = tqdm(range(2))
+        pbar = tqdm(range(100))
 
         for i in pbar:
             action = agent.act(state)

@@ -51,19 +51,18 @@ if __name__ == '__main__':
 
         # save accuracy
         env.save_acc(X,Y,Z,i_episode)
-        
         scores_deque.append(score)
         scores.append(score)
         episode.append(i_episode)
         print('\rEpisode {}\tAverage Score: {:.3f}'.format(i_episode, score), end="\n")
         torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
-        
+
         # save reward
         dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
         dataframe.to_csv("/home/cifar-gcn-drl/Test_data/reward.csv",mode='w',header = False,index=False,sep=',')
-        
+
         if i_episode % print_every == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))
 

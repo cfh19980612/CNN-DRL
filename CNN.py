@@ -84,7 +84,7 @@ class cnn(nn.Module):
         accuracy = float(correct / len(testloader.dataset))
         if self.device == 'cuda':
             model.cpu()
-        return accuracy, test_loss
+        return accuracy, test_loss.item()
 
     # local_aggregate
     def Local_agg(self, Model, i, Client, Imp, latency):

@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import csv
 
 # accuracy
 x1, y1 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv',delimiter=',',unpack = True)
-x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/test_acc_1.csv',delimiter=',',unpack = True)
-plt.cla()
 plt.plot(x1,y1, [0.1,0.53,0.93], label = 'FedAVG')
+x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/test_acc_1.csv',delimiter=',',unpack = True)
 plt.plot(x11,y11, [0.75,0.24,1], label = 'DRL')
+
+
 plt.xlabel('Time')
 plt.ylabel('Accuracy')
 plt.title('Comparasion')

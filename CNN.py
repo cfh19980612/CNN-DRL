@@ -101,7 +101,7 @@ class cnn(nn.Module):
             n = 0
             for j in range (Client):
                 if i != j:
-                    if Imp[i,j] > 0:
+                    if Imp[i,j] > 0 and Imp[i,j] < 1:
                         # P[key] = P[key] + Q[j][key]
                         # P[key] = P[key] + Imp[i,j]*Q[j][key]
                         m += Imp[i,j]*Q[j][key]

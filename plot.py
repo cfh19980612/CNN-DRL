@@ -30,3 +30,13 @@ plt.cla()
 # fig1 = plt.gcf()
 # fig1.savefig("/home/cifar-gcn-drl/Fig/Loss.eps")
 # plt.cla()
+
+# reward
+x3, y3 = np.loadtxt('/home/cifar-gcn-drl/Test_data/reward.csv',delimiter=',',unpack = True)
+plt.plot(x3,y3, color = [0.1,0.53,0.93])
+plt.xlabel('Episode')
+plt.ylabel('Reward')
+plt.title('Training')
+plt.legend()
+fig = plt.gcf()
+fig.savefig("/home/cifar-gcn-drl/Fig/Reward.eps")

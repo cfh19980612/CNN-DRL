@@ -151,8 +151,8 @@ class FedEnv(gym.Env):
             self.Model[i].load_state_dict(P[i])
 
         # global model
-        # self.global_model.load_state_dict(self.task.Global_agg(self.client, self.Model))
-        accuracy, test_loss = self.task.CNN_test(self.Model[0],self.testloader)
+        self.global_model.load_state_dict(self.task.Global_agg(self.client, self.Model))
+        accuracy, test_loss = self.task.CNN_test(self.global_model,self.testloader)
         # aggregate local model
         # Step 1: calculate the weight for each neighborhood
         # Step 2: aggregate the model from neighborhood

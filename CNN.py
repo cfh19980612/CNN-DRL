@@ -118,15 +118,15 @@ class cnn(nn.Module):
 
     # Global aggregate
     def Global_agg(self, Client, Model):
+        P = []
         for i in range (Client):
-            Model[i].to(self.device)
-        P = copy.deepcopy(Model[0].state_dict())
-        for key, value in P.items():
-            for i in range (1,Client,1):
-                temp = copy.deepcopy(Model[i].state_dict())
-                P[key] = P[key] + temp[key]
-            P[key] = torch.true_divide(P[key],Client)
-        return P
+            P.append(copy.deepcopy(Model[i].state_dict()))
+        for key in P[0].keys():
+            for i in range (Client):
+                if i != 0:
+                    P[0][key] =torch.add(P[0][key], P[i][key])
+            P[0][key] = torch.true_divide(P[0][key],Client)
+        return P[0]
 
     # step time cost
     def step_time(self, T):

@@ -160,12 +160,12 @@ class FedEnv(gym.Env):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
                 P_new[x],temp = self.task.Local_agg(self.Model, x, self.client,action, self.latency)
-                Tim.append(temp)
+                
         # update
         for client in range (self.client):
             self.Model[client].load_state_dict(P_new[client])
 
-        t = self.task.step_time(Tim)
+        
 
         # PCA
         parm_local = {}
@@ -192,7 +192,7 @@ class FedEnv(gym.Env):
         state = state.flatten()
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.9)-1
-        return (time/10)+t, accuracy, test_loss, state, reward
+        return (time/10)+temp, accuracy, test_loss, state, reward
 
 
     def reset(self, Tag):

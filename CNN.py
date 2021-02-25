@@ -115,6 +115,7 @@ class cnn(nn.Module):
         for j in range (Client):
             if j != i:
                 time += latency[i][idx[j]]
+                n += 1
                 if n >= K:
                     break
         return P, time

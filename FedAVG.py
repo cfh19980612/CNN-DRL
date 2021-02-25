@@ -194,6 +194,9 @@ def Aggregate(model, client):
 
 
 def run(dataset, net, client):
+    latency = [0 for i in range (client)]
+    for i in range (client):
+        latency[i] = random.randint(1,5)
     X, Y, Z = [], [], []
     args, trainloader, testloader = Set_dataset(dataset)
     model, global_model, optimizer = Set_model(net, client, args)
@@ -209,6 +212,8 @@ def run(dataset, net, client):
         for j in range (client):
             model[j].load_state_dict(global_model.state_dict())
         start_time += process_time
+        for j in range (client):
+            start_time += latency[j]
         X.append(start_time)
         Y.append(acc)
         Z.append(loss)

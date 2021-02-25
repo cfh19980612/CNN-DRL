@@ -104,7 +104,6 @@ class cnn(nn.Module):
             Q.append(copy.deepcopy(Model[j].state_dict()))
         for key, value in P.items():
             m = 0
-            n = 0
             for j in range (Client):
                 if i != j:
                     P[key] = P[key] + Q[idx[j]][key]
@@ -112,10 +111,12 @@ class cnn(nn.Module):
                     if m >= K:
                         break
             P[key] = torch.true_divide(P[key],m+1)
-
+        n = 0
         for j in range (Client):
-            # if self.G.has_edge(i,j):
-            time += latency[i][j]
+            if j != i:
+                time += latency[i][idx[j]]
+                if n >= K:
+                    break
         return P, time
 
     # Global aggregate

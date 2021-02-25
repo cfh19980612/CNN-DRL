@@ -158,7 +158,7 @@ def Train(model, optimizer, client, trainloader):
     for i in range (client):
         P[i] = copy.deepcopy(model[i].state_dict())
 
-    return P, (time_end-time_start)
+    return P, (time_end-time_start)/client
 
 def Test(model, testloader):
     # cpu ? gpu

@@ -107,7 +107,7 @@ class cnn(nn.Module):
             n = 0
             for j in range (Client):
                 if i != j:
-                    P[key] = P[key] + Q[idx[j]]
+                    P[key] = P[key] + Q[idx[j]][key]
                     m = m+1
                     if m >= K:
                         break

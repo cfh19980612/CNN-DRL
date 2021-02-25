@@ -90,6 +90,12 @@ class cnn(nn.Module):
     def Local_agg(self, Model, i, Client, Imp, latency):
         # print ('Action: ',p)
         Imp = np.array(Imp).reshape((Client,Client))
+        Probability = Imp[i]    # get the probabilities that client i use to choose aggregations
+        sorted_nums = sorted(enumerate(Probability), key=lambda x: x[1])    # sort the probabilities
+        idx = [i[0] for i in sorted_nums]    # get the idex from the sorted probabilities
+
+        K = 4    # maximum aggregations
+
         # print ('P: ', p)
         time = 0
         Q = []
@@ -101,15 +107,11 @@ class cnn(nn.Module):
             n = 0
             for j in range (Client):
                 if i != j:
-                    if Imp[i,j] > 0 and Imp[i,j] < 1:
-                        # P[key] = P[key] + Q[j][key]
-                        # P[key] = P[key] + Imp[i,j]*Q[j][key]
-                        m += Imp[i,j]*Q[j][key]
-                        n += Imp[i,j]
-                        # m += 1
-            m = torch.true_divide(m,n)
-            # P[key] = torch.true_divide(P[key],m+1)
-            P[key] = torch.true_divide(P[key]+m,2)
+                    P[key] = P[key] + Q[idx[j]]
+                    m = m+1
+                    if m >= K:
+                        break
+            P[key] = torch.true_divide(P[key],m+1)
 
         for j in range (Client):
             # if self.G.has_edge(i,j):

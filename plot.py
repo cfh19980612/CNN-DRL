@@ -4,7 +4,7 @@ import numpy as np
 # accuracy
 x1, y1 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv',delimiter=',',unpack = True)
 plt.plot(x1,y1, color = [0.1,0.53,0.93], label = 'FedAVG')
-x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/test_acc_1.csv',delimiter=',',unpack = True)
+x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/test_acc_3.csv',delimiter=',',unpack = True)
 plt.plot(x11,y11, color = [0.75,0.24,1], label = 'DRL')
 
 

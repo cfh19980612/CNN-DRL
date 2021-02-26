@@ -11,7 +11,7 @@ def N_gpu_util_timer():
         time_x.append(n)
         gpu_y.append(gpu_load)
         time.sleep(1)
-    print(gpu_y)
+    # print(gpu_y)
     print('N gpu done')
 
 if __name__ == '__main__':

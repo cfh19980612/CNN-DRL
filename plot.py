@@ -40,7 +40,7 @@ plt.title('Training')
 plt.legend()
 fig = plt.gcf()
 fig.savefig("/home/cifar-gcn-drl/Fig/Reward.eps")
-
+plt.cla()
 
 x4, y4 = np.loadtxt('/home/cifar-gcn-drl/Test_data/GPU.csv',delimiter=',',unpack = True)
 plt.plot(x4,y4, color = [0.1,0.53,0.93])

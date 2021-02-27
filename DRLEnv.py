@@ -25,6 +25,10 @@ class FedEnv(gym.Env):
         self.net = net
         # small world
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
+        if self.dataset == 'MNIST':
+            self.reshapeSize = 1199882
+        elif self.dataset = 'CIFAR10':
+            self.reshapeSize = 3217226
 
         # To DGL graph
         # self.g = dgl.from_networkx(self.G)
@@ -137,7 +141,6 @@ class FedEnv(gym.Env):
             global_model = MobileNet()
             return Model, global_model, Optimizer
 
-
     def step(self, action, epoch):
 
         # # GAT network
@@ -160,12 +163,10 @@ class FedEnv(gym.Env):
             P_new = [None for m in range (self.client)]
             for x in range (self.client):
                 P_new[x],temp = self.task.Local_agg(self.Model, x, self.client,action, self.latency)
-                
+
         # update
         for client in range (self.client):
             self.Model[client].load_state_dict(P_new[client])
-
-        
 
         # PCA
         parm_local = {}
@@ -185,7 +186,7 @@ class FedEnv(gym.Env):
         # to 1-axis
 
         # convert to [num_samples, num_features]
-        S = np.reshape(S_local,(self.client,3217226))
+        S = np.reshape(S_local,(self.client,self.reshapeSize))
 
         # pca
         state = self.pca.fit_transform(S)
@@ -193,7 +194,6 @@ class FedEnv(gym.Env):
         # self.toCsv(times,score)
         reward = pow(128, accuracy-0.9)-0.01*((time/10)+temp)
         return (time/10)+temp, accuracy, test_loss, state, reward
-
 
     def reset(self, Tag):
         self.Model, self.global_model, self.Optimizer = self.Set_Environment(self.client)
@@ -216,7 +216,7 @@ class FedEnv(gym.Env):
         S_local = np.array(S_local).flatten()
 
         # convert to [num_samples, num_features]
-        S = np.reshape(S_local,(self.client,3217226))
+        S = np.reshape(S_local,(self.client,self.reshapeSize))
 
         # pca training ?
         if Tag:
@@ -226,10 +226,12 @@ class FedEnv(gym.Env):
 
 
         return state
+
     def save_acc(self, X, Y, Z, i_episode):
-        self.task.toCsv(X, Y, Z, i_episode)
+        self.task.toCsv(X, Y, Z, i_episode,self.dataset)
 
     def render(self, mode='human'):
         return None
+
     def close(self):
         return None

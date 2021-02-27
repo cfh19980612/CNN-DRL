@@ -7,9 +7,14 @@ import pandas as pd
 from collections import deque
 
 if __name__ == '__main__':
-    print (torch.cuda.is_available())
+    dataset, net = 'MNIST', 'MNISTNet'
+    if dataset == 'MNIST':
+        target == 0.99
+    elif dataset == 'CIFAR10':
+        target == 0.95
+
     epoches, print_every = 200, 100
-    env = FedEnv(Client = 10, k = 9, dataset = 'MNIST', net = 'MNISTNet')  # env
+    env = FedEnv(Client = 10, k = 9, dataset = dataset, net = net)  # env
     agent = Agent(state_size=100, action_size=100, random_seed=2)  # agent
     scores_deque = deque(maxlen=print_every)
     scores = []
@@ -45,7 +50,7 @@ if __name__ == '__main__':
             score += reward
 
             # end?
-            if accuracy >= 0.95:
+            if accuracy >= target:
                 break
             pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Reward: %.3f Time: %.3f" %(i, accuracy, test_loss, reward, start_time))
 

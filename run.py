@@ -8,11 +8,10 @@ from collections import deque
 
 if __name__ == '__main__':
     dataset, net = 'MNIST', 'MNISTNet'
-    target = 0
     if dataset == 'MNIST':
-        target == 0.99
+        target = 0.99
     elif dataset == 'CIFAR10':
-        target == 0.95
+        target = 0.95
 
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 9, dataset = dataset, net = net)  # env

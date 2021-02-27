@@ -60,9 +60,10 @@ def Set_dataset(dataset):
                 'dog', 'frog', 'horse', 'ship', 'truck')
 
         return args, trainloader, testloader
+
     elif dataset == 'MNIST':
         parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-        parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+        parser.add_argument('--lr', default=0.001, type=float, help='learning rate')
         parser.add_argument('--resume', '-r', action='store_true',
                             help='resume from checkpoint')
         parser.add_argument('--epoch',default=100,type=int,help='epoch')
@@ -138,19 +139,18 @@ def Train(model, optimizer, client, trainloader):
     Loss = [0 for i in range (client)]
     time_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
-            if batch_idx < 360:
-                idx = (batch_idx % client)
-                model[idx].train()
-                inputs, targets = inputs.to(device), targets.to(device)
-                optimizer[idx].zero_grad()
-                outputs = model[idx](inputs)
-                Loss[idx] = criterion(outputs, targets)
-                Loss[idx].backward()
-                optimizer[idx].step()
-                train_loss[idx] += Loss[idx].item()
-                _, predicted = outputs.max(1)
-                total[idx] += targets.size(0)
-                correct[idx] += predicted.eq(targets).sum().item()
+            idx = (batch_idx % client)
+            model[idx].train()
+            inputs, targets = inputs.to(device), targets.to(device)
+            optimizer[idx].zero_grad()
+            outputs = model[idx](inputs)
+            Loss[idx] = criterion(outputs, targets)
+            Loss[idx].backward()
+            optimizer[idx].step()
+            train_loss[idx] += Loss[idx].item()
+            _, predicted = outputs.max(1)
+            total[idx] += targets.size(0)
+            correct[idx] += predicted.eq(targets).sum().item()
     time_end = time.time()
     if device == 'cuda':
         for i in range (client):
@@ -217,15 +217,20 @@ def run(dataset, net, client):
         X.append(start_time)
         Y.append(acc)
         Z.append(loss)
-    location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv'
+
+    if dataset == 'CIFAR10':
+        location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv'
+        location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv'
+    elif dataset == 'MNIST':
+        location_acc = '/home/mnist-gcn-drl/Test_data/FedAVG_ACC.csv'
+        location_loss = '/home/mnist-gcn-drl/Test_data/FedAVG_LOSS.csv'
+
     dataframe_1 = pd.DataFrame(X, columns=['X'])
     dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
     dataframe_1.to_csv(location_acc,mode = 'w', header = False,index=False,sep=',')
-
-    location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv'
     dataframe = pd.DataFrame(X, columns=['X'])
     dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
     dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
-    run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)
+    run(dataset = 'MNIST', net = 'MNISTNet', client = 10)

@@ -229,11 +229,11 @@ def run(dataset, net, client):
 
     # the root to store the training processing
     if dataset == 'CIFAR10':
-        location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv'
-        location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv'
+        location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_ACC.csv'
+        location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_LOSS.csv'
     elif dataset == 'MNIST':
-        location_acc = '/home/mnist-gcn-drl/Test_data/FedAVG_ACC.csv'
-        location_loss = '/home/mnist-gcn-drl/Test_data/FedAVG_LOSS.csv'
+        location_acc = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_ACC.csv'
+        location_loss = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_LOSS.csv'
 
     dataframe_1 = pd.DataFrame(X, columns=['X'])
     dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)

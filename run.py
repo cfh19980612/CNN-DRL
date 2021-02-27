@@ -8,6 +8,7 @@ from collections import deque
 
 if __name__ == '__main__':
     dataset, net = 'MNIST', 'MNISTNet'
+    target = 0
     if dataset == 'MNIST':
         target == 0.99
     elif dataset == 'CIFAR10':

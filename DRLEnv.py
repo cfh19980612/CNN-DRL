@@ -27,7 +27,7 @@ class FedEnv(gym.Env):
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
         if self.dataset == 'MNIST':
             self.reshapeSize = 1199882
-        elif self.dataset = 'CIFAR10':
+        elif self.dataset == 'CIFAR10':
             self.reshapeSize = 3217226
 
         # To DGL graph

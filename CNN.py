@@ -153,4 +153,4 @@ class cnn(nn.Module):
         location_loss = '/home/mnist-gcn-drl/Test_data/test_loss_' + str(i_episode) + '.csv'
         dataframe = pd.DataFrame(times, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(loss,columns=['Y'])],axis=1)
-        dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')}
+        dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')

@@ -64,9 +64,13 @@ if __name__ == '__main__':
         torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
 
         # save reward
+        if dataset == 'MNIST':
+            location = '/home/mnist-gcn-drl/Test_data/mnist_reward.csv'
+        elif dataset == 'CIFAR10':
+            location = '/home/cifar10-gcn-drl/Test_data/mnist_reward.csv'
         dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
-        dataframe.to_csv("/home/cifar-gcn-drl/Test_data/reward.csv",mode='w',header = False,index=False,sep=',')
+        dataframe.to_csv(location,mode='w',header = False,index=False,sep=',')
 
         if i_episode % print_every == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))

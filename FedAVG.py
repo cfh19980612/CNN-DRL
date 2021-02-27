@@ -192,32 +192,42 @@ def Aggregate(model, client):
         P[0][key] = torch.true_divide(P[0][key],client)
     return P[0]
 
-
 def run(dataset, net, client):
-    latency = [0 for i in range (client)]
+    # target accuracy
+    if dataset == 'MNIST':
+        target = 0.98
+    elif dataset == 'CIFAR10':
+        target = 0.9
+
+    latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
         latency[i] = random.randint(1,5)
-    X, Y, Z = [], [], []
-    args, trainloader, testloader = Set_dataset(dataset)
-    model, global_model, optimizer = Set_model(net, client, args)
-    pbar = tqdm(range(args.epoch))
+
+    X, Y, Z = [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis
+
+    args, trainloader, testloader = Set_dataset(dataset)    # init dataset
+    model, global_model, optimizer = Set_model(net, client, args)   # init models
+    pbar = tqdm(range(args.epoch))  # init processing par
     start_time = 0
+
     for i in pbar:
-        Temp, process_time = Train(model, optimizer, client, trainloader)
+        Temp, process_time = Train(model, optimizer, client, trainloader)   # training model
         for j in range (client):
             model[j].load_state_dict(Temp[j])
-        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))
-        acc, loss = Test(global_model, testloader)
-        pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))
+        global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))   # aggregate models
+        acc, loss = Test(global_model, testloader)  # test models
+
+        pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))  # output accuracy and loss
         for j in range (client):
-            model[j].load_state_dict(global_model.state_dict())
+            model[j].load_state_dict(global_model.state_dict())     # update local models
         start_time += process_time
         for j in range (client):
             start_time += latency[j]
-        X.append(start_time)
-        Y.append(acc)
-        Z.append(loss)
+        X.append(start_time)    # store time
+        Y.append(acc)   # store accuracy
+        Z.append(loss)  #store loss
 
+    # the root to store the training processing
     if dataset == 'CIFAR10':
         location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_ACC.csv'
         location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_LOSS.csv'

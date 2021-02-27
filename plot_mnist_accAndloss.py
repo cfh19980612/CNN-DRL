@@ -28,7 +28,7 @@ plt.ylabel('Loss')
 plt.title('Comparasion')
 plt.legend()
 fig1 = plt.gcf()
-fig1.savefig("/home/cifar-gcn-drl/Fig/MNIST_Loss.eps")
+fig1.savefig("/home/mnist-gcn-drl/Fig/MNIST_Loss.eps")
 plt.cla()
 
 

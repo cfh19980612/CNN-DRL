@@ -243,4 +243,4 @@ def run(dataset, net, client):
     dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
-    run(dataset = 'MNIST', net = 'MNISTNet', client = 10)
+    run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)

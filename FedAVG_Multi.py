@@ -229,7 +229,7 @@ def run(dataset, net, client):
                 model[i].load_state_dict(Local_temp[j])
 
         for j in range (client):
-            local_agg_temp = LocalAggregate(globals, model[j])
+            local_agg_temp = LocalAggregate(global_model, model[j])
             model[j].load_state_dict(local_agg_temp)
 
         acc, loss = Test(global_model, testloader)  # test models

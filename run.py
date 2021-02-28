@@ -7,6 +7,7 @@ import pandas as pd
 from collections import deque
 
 if __name__ == '__main__':
+    print(torch.cuda.is_available())
     dataset, net = 'CIFAR10', 'MobileNet'
     if dataset == 'MNIST':
         target = 0.99

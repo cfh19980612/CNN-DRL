@@ -226,7 +226,7 @@ def run(dataset, net, client):
         for k in range (5):
             Local_temp, T = Train(model, optimizer, client, trainloader) # local training when global aggregation
             for j in range (client):
-                model[i].load_state_dict(Local_temp[j])
+                model[j].load_state_dict(Local_temp[j])
 
         for j in range (client):
             local_agg_temp = LocalAggregate(global_model, model[j])

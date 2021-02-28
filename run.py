@@ -7,7 +7,7 @@ import pandas as pd
 from collections import deque
 
 if __name__ == '__main__':
-    dataset, net = 'MNIST', 'MNISTNet'
+    dataset, net = 'CIFAR10', 'MobileNet'
     if dataset == 'MNIST':
         target = 0.99
     elif dataset == 'CIFAR10':

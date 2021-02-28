@@ -36,7 +36,7 @@ x3, y3 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_ACC.csv',delim
 plt.plot(x3,y3, color = [0.1,0.53,0.93], label = 'FedAVG')
 x31, y31 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_multi_cifar10_ACC.csv',delimiter=',',unpack = True)
 plt.plot(x31,y31, color = [0.75,0.24,1], label = 'Multi_1')
-x32, y32 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_multi5_cifar10_ACC.csv',delimiter=',',unpack = True)
+x32, y32 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_multi2_cifar10_ACC.csv',delimiter=',',unpack = True)
 plt.plot(x32,y32, color = [1,0.27,0], label = 'Multi_5')
 plt.xlabel('Time')
 plt.ylabel('Loss')

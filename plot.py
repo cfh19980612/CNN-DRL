@@ -3,9 +3,9 @@ import numpy as np
 
 # accuracy
 x1, y1 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_ACC.csv',delimiter=',',unpack = True)
-plt.plot(x1,y1, linestyle = '--', color = [0.1,0.53,0.93], label = 'FedAVG')
+plt.plot(x1,y1, linestyle = '-.', color = [0.412,0.412,0.412], label = 'FedAVG')
 x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_acc_1.csv',delimiter=',',unpack = True)
-plt.plot(x11,y11, linestyle = '--', color = [0.75,0.24,1], label = 'DRL')
+plt.plot(x11,y11, linestyle = '-', color = [1,0.65,0], label = 'DRL')
 
 
 plt.xlabel('Time')
@@ -19,9 +19,9 @@ plt.cla()
 
 # loss
 x2, y2 = np.loadtxt('/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_LOSS.csv',delimiter=',',unpack = True)
-plt.plot(x2,y2, linestyle = '--', color = [0.1,0.53,0.93], label = 'FedAVG')
+plt.plot(x2,y2, linestyle = '-.', color = [0.412,0.412,0.412], label = 'FedAVG')
 x21,y21 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_loss_1.csv',delimiter=',',unpack = True)
-plt.plot(x21,y21, linestyle = '--', color = [0.75,0.24,1], label = 'DRL')
+plt.plot(x21,y21, linestyle = '-', color = [1,0.65,0], label = 'DRL')
 
 plt.xlabel('Time')
 plt.ylabel('Loss')

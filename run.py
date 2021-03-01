@@ -68,7 +68,7 @@ if __name__ == '__main__':
         if dataset == 'MNIST':
             location = '/home/mnist-gcn-drl/Test_data/mnist_reward.csv'
         elif dataset == 'CIFAR10':
-            location = '/home/cifar10-gcn-drl/Test_data/cifar10_reward.csv'
+            location = '/home/cifar-gcn-drl/Test_data/cifar10_reward.csv'
         dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
         dataframe.to_csv(location,mode='w',header = False,index=False,sep=',')

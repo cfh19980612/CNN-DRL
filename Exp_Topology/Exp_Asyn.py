@@ -220,7 +220,7 @@ def run(dataset, net, client):
         target = 0.9
     G = nx.watts_strogatz_graph(n = client, k = 3, p = 0.5)
     Process_time = np.random.randint(1,10,size = client)
-    latency = [0 for i in range (client)]   #latency between clients
+    latency = [[0 for i in range (client)]for j in range (client)]   #latency between clients
     for i in range (client):
         for j in range (client):
                 latency[i][j] = 1

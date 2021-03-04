@@ -197,11 +197,15 @@ def Local_Aggregate(model, j, G):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
-    for key in P[0].keys():
+    Q = copy.deepcopy(model[j].state_dict())
+    for key in Q.keys():
+        m = 0
         for i in range (client):
-            if i != 0:
-                P[0][key] =torch.add(P[0][key], P[i][key])
-        P[0][key] = torch.true_divide(P[0][key],client)
+            if G.has_edge(i,j):
+                Q[key] =torch.add(Q[key], P[i][key])
+                m += 1
+        Q[key] = torch.true_divide(Q[key],m+1)
+    return Q
 
 def run(dataset, net, client):
     # target accuracy
@@ -209,7 +213,7 @@ def run(dataset, net, client):
         target = 0.98
     elif dataset == 'CIFAR10':
         target = 0.9
-
+    G = nx.watts_strogatz_graph(n = client, k = k, p = 0.5)
     Process_time = np.random.randint(1,10,size = client)
     latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
@@ -228,7 +232,7 @@ def run(dataset, net, client):
             model[j].load_state_dict(Temp[j])     # 异步训练
         # global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))   # aggregate models
         # acc, loss = Test(global_model, testloader)  # test models
-        for j in range (client):
+        for j in range (client):    # asynchronous aggregation
             if i %Process_time[j] == 0:
                 model[j].load_state_dict(Local_Aggregate(model, j, G))
 
@@ -244,11 +248,11 @@ def run(dataset, net, client):
 
     # the root to store the training processing
     if dataset == 'CIFAR10':
-        location_acc = '/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_ACC.csv'
-        location_loss = '/home/cifar-gcn-drl/Test_data/FedAVG_cifar10_LOSS.csv'
+        location_acc = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_ACC.csv'
+        location_loss = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_LOSS.csv'
     elif dataset == 'MNIST':
-        location_acc = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_ACC.csv'
-        location_loss = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_LOSS.csv'
+        location_acc = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_ACC.csv'
+        location_loss = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_LOSS.csv'
 
     dataframe_1 = pd.DataFrame(X, columns=['X'])
     dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)

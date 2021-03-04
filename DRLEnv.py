@@ -25,8 +25,9 @@ class FedEnv(gym.Env):
         self.net = net
         # small world
         self.G = nx.watts_strogatz_graph(n = self.client, k = k, p = self.p)
+
         if self.dataset == 'MNIST':
-            self.reshapeSize = 1199882
+            self.reshapeSize = 1199882  # PCA reshape
         elif self.dataset == 'CIFAR10':
             self.reshapeSize = 3217226
 

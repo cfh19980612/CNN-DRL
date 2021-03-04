@@ -8,6 +8,10 @@ from collections import deque
 
 if __name__ == '__main__':
     print(torch.cuda.is_available())
+    if os.path.exists('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth')
+        checkpoint = True
+    else checkpoint = False
+
     dataset, net = 'CIFAR10', 'MobileNet'
     if dataset == 'MNIST':
         target = 0.99
@@ -20,6 +24,20 @@ if __name__ == '__main__':
     scores_deque = deque(maxlen=print_every)
     scores = []
     episode = []
+
+    # 是否重用训练的模型
+    if checkpoint:
+        if dataset == 'CIFAR10':
+            agent.actor_local.load_state_dict(torch.load('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth'))
+            agent.actor_target.load_state_dict(torch.load('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_target.pth'))
+            agent.critic_local.load_state_dict(torch.load('/home/cifar-gcn-drl/checkpoint/drl_cifar10_critic_local.pth'))
+            agent.critic_target.load_state_dict(torch.load('/home/cifar-gcn-drl/checkpoint/drl_cifar10_critic_target.pth'))
+        elif dataset == 'MNIST':
+            agent.actor_local.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_local.pth'))
+            agent.actor_target.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_target.pth'))
+            agent.critic_local.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_local.pth'))
+            agent.critic_target.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_target.pth'))
+
 
     for i_episode in range(1, 200+1):
         X, Y, Z = [], [], []  # x and y axis for test_data
@@ -76,5 +94,16 @@ if __name__ == '__main__':
         if i_episode % print_every == 0:
             print('\rEpisode {}\tAverage Score: {:.2f}'.format(i_episode, np.mean(scores_deque)))
 
+    # save the drl models
+    if dataset == 'CIFAR10':
+        torch.save(agent.actor_local.state_dict(),'/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth')
+        torch.save(agent.actor_target.state_dict(),'/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_target.pth')
+        torch.save(agent.critic_local.state_dict(),'/home/cifar-gcn-drl/checkpoint/drl_cifar10_critic_local.pth')
+        torch.save(agent.critic_target.state_dict(),'/home/cifar-gcn-drl/checkpoint/drl_cifar10_critic_target.pth')
+    elif dataset == 'MNIST':
+        torch.save(agent.actor_local.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_local.pth')
+        torch.save(agent.actor_target.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_target.pth')
+        torch.save(agent.critic_local.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_local.pth')
+        torch.save(agent.critic_target.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_target.pth')
 
 

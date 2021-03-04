@@ -33,7 +33,7 @@ plt.cla()
 
 # reward
 x3, y3 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_reward.csv',delimiter=',',unpack = True)
-plt.plot(x3,y3, color = [0.1,0.53,0.93])
+plt.plot(x3,y3, linestyle = '-.', color = [0.412,0.412,0.412])
 plt.xlabel('Episode')
 plt.ylabel('Reward')
 plt.title('Training')

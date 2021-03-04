@@ -140,7 +140,7 @@ def Train(model, optimizer, client, trainloader, Process_time, Round):
     time_start = time.time()
     for batch_idx, (inputs, targets) in enumerate(trainloader):
             idx = (batch_idx % client)
-            if Round % Process_time[idx] == 0
+            if Round % Process_time[idx] == 0:
                 model[idx].train()
                 inputs, targets = inputs.to(device), targets.to(device)
                 optimizer[idx].zero_grad()

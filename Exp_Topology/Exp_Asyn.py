@@ -1,4 +1,5 @@
-import os
+import sys, os
+sys.path.append(os.path.abspath('/home/cifar-gcn-drl/models'))
 
 import torch
 import torch.nn as nn

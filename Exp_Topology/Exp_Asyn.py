@@ -193,7 +193,7 @@ def Aggregate(model, client):
         P[0][key] = torch.true_divide(P[0][key],client)
     return P[0]
 
-def Local_Aggregate(model, j, G):
+def Local_Aggregate(model, j, client, G, latency):
     P = []
     for i in range (client):
         P.append(copy.deepcopy(model[i].state_dict()))
@@ -205,7 +205,12 @@ def Local_Aggregate(model, j, G):
                 Q[key] =torch.add(Q[key], P[i][key])
                 m += 1
         Q[key] = torch.true_divide(Q[key],m+1)
-    return Q
+
+    time = 0
+    for i in range (client):
+        if G.has_edge(i,j):
+            time += latency[i,j]
+    return Q, time
 
 def run(dataset, net, client):
     # target accuracy
@@ -213,7 +218,7 @@ def run(dataset, net, client):
         target = 0.98
     elif dataset == 'CIFAR10':
         target = 0.9
-    G = nx.watts_strogatz_graph(n = client, k = k, p = 0.5)
+    G = nx.watts_strogatz_graph(n = client, k = 3, p = 0.5)
     Process_time = np.random.randint(1,10,size = client)
     latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
@@ -234,15 +239,18 @@ def run(dataset, net, client):
         # acc, loss = Test(global_model, testloader)  # test models
         for j in range (client):    # asynchronous aggregation
             if i %Process_time[j] == 0:
-                model[j].load_state_dict(Local_Aggregate(model, j, G))
-
+                model_temp, time_temp = Local_Aggregate(model, j, client, G, latency)
+                model[j].load_state_dict(model_temp)
+                if j == 0:
+                    time+=time_temp
+        acc, loss = Test(model[0], testloader)  # test models
         pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))  # output accuracy and loss
-        for j in range (client):
-            model[j].load_state_dict(global_model.state_dict())     # update local models
+        # for j in range (client):
+        #     model[j].load_state_dict(global_model.state_dict())     # update local models
         start_time += time
-        for j in range (client):
-            start_time += latency[j]
+
         X.append(start_time)    # store time
+        XX.append(i)
         Y.append(acc)   # store accuracy
         Z.append(loss)  #store loss
 
@@ -254,10 +262,10 @@ def run(dataset, net, client):
         location_acc = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_ACC.csv'
         location_loss = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_LOSS.csv'
 
-    dataframe_1 = pd.DataFrame(X, columns=['X'])
+    dataframe_1 = pd.DataFrame(XX, columns=['X'])
     dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
     dataframe_1.to_csv(location_acc,mode = 'w', header = False,index=False,sep=',')
-    dataframe = pd.DataFrame(X, columns=['X'])
+    dataframe = pd.DataFrame(XX, columns=['X'])
     dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
     dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
 

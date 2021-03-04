@@ -245,6 +245,7 @@ def run(dataset, net, client):
     G = nx.watts_strogatz_graph(n = client, k = 5, p = 0.5)
     # heterogeneous process capacity
     Process_time = np.random.randint(1,5,size = client)
+    Process_time[0] = 1
     # latency across clients
     latency = [[0 for i in range (client)]for j in range (client)]   #latency between clients
     for i in range (client):

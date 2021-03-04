@@ -225,7 +225,7 @@ def run(dataset, net, client):
         for j in range (client):
                 latency[i][j] = 1
 
-    X, Y, Z = [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis
+    X, Y, Z, XX = [], [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis, XX: round-axis
 
     args, trainloader, testloader = Set_dataset(dataset)    # init dataset
     model, global_model, optimizer = Set_model(net, client, args)   # init models

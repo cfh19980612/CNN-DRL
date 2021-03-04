@@ -209,7 +209,7 @@ def Local_Aggregate(model, j, client, G, latency):
     time = 0
     for i in range (client):
         if G.has_edge(i,j):
-            time += latency[i,j]
+            time += latency[i][j]
     return Q, time
 
 def run(dataset, net, client):
@@ -222,7 +222,8 @@ def run(dataset, net, client):
     Process_time = np.random.randint(1,10,size = client)
     latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
-        latency[i] = 1
+        for j in range (self.client):
+                self.latency[i][j] = 1
 
     X, Y, Z = [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis
 

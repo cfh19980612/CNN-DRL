@@ -223,7 +223,7 @@ def Local_Aggregate_1(model, j, client, G, latency, process_time):
         m = 0
         for i in range (client):
             if G.has_edge(i,j):
-                if process_time[i] <= 2:
+                if process_time[i] < 3:
                     Q[key] =torch.add(Q[key], P[i][key])
                     m += 1
         Q[key] = torch.true_divide(Q[key],m+1)
@@ -251,7 +251,7 @@ def run(dataset, net, client):
         for j in range (client):
                 latency[i][j] = 1
 
-    for l in range (1,3,1):
+    for l in range (1,2,1):
 
         if l == 0:
             print ('Start training task with no topology design!')

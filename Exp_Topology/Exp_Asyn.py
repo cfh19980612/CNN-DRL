@@ -222,8 +222,8 @@ def run(dataset, net, client):
     Process_time = np.random.randint(1,10,size = client)
     latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
-        for j in range (self.client):
-                self.latency[i][j] = 1
+        for j in range (client):
+                latency[i][j] = 1
 
     X, Y, Z = [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis
 

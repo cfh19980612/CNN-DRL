@@ -251,7 +251,7 @@ def run(dataset, net, client):
         for j in range (client):
                 latency[i][j] = 1
 
-    for l in range (2):
+    for l in range (1,3,1):
 
         if l == 0:
             print ('Start training task with no topology design!')
@@ -275,7 +275,7 @@ def run(dataset, net, client):
                     if l == 0:
                         model_temp, time_temp = Local_Aggregate(model, j, client, G, latency)
                     elif l == 1:
-                        model_temp, time_temp = Local_Aggregate_1(model, j, client, G, latency, process_time)
+                        model_temp, time_temp = Local_Aggregate_1(model, j, client, G, latency, Process_time)
                     model[j].load_state_dict(model_temp)
                     if j == 0:
                         time+=time_temp

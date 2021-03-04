@@ -193,6 +193,7 @@ def Aggregate(model, client):
         P[0][key] = torch.true_divide(P[0][key],client)
     return P[0]
 
+# local aggregate without topology changing
 def Local_Aggregate(model, j, client, G, latency):
     P = []
     for i in range (client):
@@ -212,63 +213,105 @@ def Local_Aggregate(model, j, client, G, latency):
             time += latency[i][j]
     return Q, time
 
+# local aggregate with moving some links
+def Local_Aggregate_1(model, j, client, G, latency, process_time):
+    P = []
+    for i in range (client):
+        P.append(copy.deepcopy(model[i].state_dict()))
+    Q = copy.deepcopy(model[j].state_dict())
+    for key in Q.keys():
+        m = 0
+        for i in range (client):
+            if G.has_edge(i,j):
+                if process_time[i] <= 2:
+                    Q[key] =torch.add(Q[key], P[i][key])
+                    m += 1
+        Q[key] = torch.true_divide(Q[key],m+1)
+
+    time = 0
+    for i in range (client):
+        if G.has_edge(i,j):
+            time += latency[i][j]
+    return Q, time
+
 def run(dataset, net, client):
+
     # target accuracy
     if dataset == 'MNIST':
         target = 0.98
     elif dataset == 'CIFAR10':
         target = 0.9
-    G = nx.watts_strogatz_graph(n = client, k = 3, p = 0.5)
-    Process_time = np.random.randint(1,10,size = client)
+    # Graph
+    G = nx.watts_strogatz_graph(n = client, k = 5, p = 0.5)
+    # heterogeneous process capacity
+    Process_time = np.random.randint(1,5,size = client)
+    # latency across clients
     latency = [[0 for i in range (client)]for j in range (client)]   #latency between clients
     for i in range (client):
         for j in range (client):
                 latency[i][j] = 1
 
-    X, Y, Z, XX = [], [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis, XX: round-axis
+    for l in range (2):
 
-    args, trainloader, testloader = Set_dataset(dataset)    # init dataset
-    model, global_model, optimizer = Set_model(net, client, args)   # init models
-    pbar = tqdm(range(args.epoch))  # init processing par
-    start_time = 0
+        if l == 0:
+            print ('Start training task with no topology design!')
+        elif l == 1:
+            print ('Start training task with moving links!')
 
-    for i in pbar:
-        Temp, time = Train(model, optimizer, client, trainloader, Process_time, i)   # training model
-        for j in range (client):
-            model[j].load_state_dict(Temp[j])     # 异步训练
-        # global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))   # aggregate models
-        # acc, loss = Test(global_model, testloader)  # test models
-        for j in range (client):    # asynchronous aggregation
-            if i %Process_time[j] == 0:
-                model_temp, time_temp = Local_Aggregate(model, j, client, G, latency)
-                model[j].load_state_dict(model_temp)
-                if j == 0:
-                    time+=time_temp
-        acc, loss = Test(model[0], testloader)  # test models
-        pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))  # output accuracy and loss
-        # for j in range (client):
-        #     model[j].load_state_dict(global_model.state_dict())     # update local models
-        start_time += time
+        X, Y, Z, XX = [], [], [], []    # X: time-axis; Y: accuracy-axis; Z: loss-axis, XX: round-axis
+        args, trainloader, testloader = Set_dataset(dataset)    # init dataset
+        model, global_model, optimizer = Set_model(net, client, args)   # init models
+        pbar = tqdm(range(args.epoch))  # init processing par
+        start_time = 0
 
-        X.append(start_time)    # store time
-        XX.append(i)
-        Y.append(acc)   # store accuracy
-        Z.append(loss)  #store loss
+        for i in pbar:
+            Temp, time = Train(model, optimizer, client, trainloader, Process_time, i)   # training model
+            for j in range (client):
+                model[j].load_state_dict(Temp[j])     # 异步训练
+            # global_model.load_state_dict(Aggregate(copy.deepcopy(model), client))   # aggregate models
+            # acc, loss = Test(global_model, testloader)  # test models
+            for j in range (client):    # asynchronous aggregation
+                if i %Process_time[j] == 0:
+                    if l == 0:
+                        model_temp, time_temp = Local_Aggregate(model, j, client, G, latency)
+                    elif l == 1:
+                        model_temp, time_temp = Local_Aggregate_1(model, j, client, G, latency, process_time)
+                    model[j].load_state_dict(model_temp)
+                    if j == 0:
+                        time+=time_temp
+            acc, loss = Test(model[0], testloader)  # test models
+            pbar.set_description("Epoch: %d Accuracy: %.3f Loss: %.3f Time: %.3f" %(i, acc, loss, start_time))  # output accuracy and loss
+            # for j in range (client):
+            #     model[j].load_state_dict(global_model.state_dict())     # update local models
+            start_time += time
 
-    # the root to store the training processing
-    if dataset == 'CIFAR10':
-        location_acc = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_ACC.csv'
-        location_loss = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_LOSS.csv'
-    elif dataset == 'MNIST':
-        location_acc = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_ACC.csv'
-        location_loss = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_LOSS.csv'
+            X.append(start_time)    # store time
+            XX.append(i)
+            Y.append(acc)   # store accuracy
+            Z.append(loss)  #store loss
 
-    dataframe_1 = pd.DataFrame(XX, columns=['X'])
-    dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
-    dataframe_1.to_csv(location_acc,mode = 'w', header = False,index=False,sep=',')
-    dataframe = pd.DataFrame(XX, columns=['X'])
-    dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
-    dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
+        # the root to store the training processing
+        if dataset == 'CIFAR10':
+            if l == 0:
+                location_acc = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_ACC_base.csv'
+                location_loss = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_LOSS_base.csv'
+            elif l == 1:
+                location_acc = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_ACC_move.csv'
+                location_loss = '/home/cifar-gcn-drl/Test_data/Asyn_cifar10_LOSS_move.csv'
+        elif dataset == 'MNIST':
+            if l == 0:
+                location_acc = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_ACC_base.csv'
+                location_loss = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_LOSS_base.csv'
+            elif l == 1:
+                location_acc = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_ACC_move.csv'
+                location_loss = '/home/mnist-gcn-drl/Test_data/Asyn_mnist_LOSS_move.csv'
+
+        dataframe_1 = pd.DataFrame(XX, columns=['X'])
+        dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
+        dataframe_1.to_csv(location_acc,mode = 'w', header = False,index=False,sep=',')
+        dataframe = pd.DataFrame(XX, columns=['X'])
+        dataframe = pd.concat([dataframe, pd.DataFrame(Z,columns=['Z'])],axis=1)
+        dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
     run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)

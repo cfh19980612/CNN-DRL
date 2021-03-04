@@ -251,7 +251,7 @@ def run(dataset, net, client):
         for j in range (client):
                 latency[i][j] = 1
 
-    for l in range (1,2,1):
+    for l in range (2):
 
         if l == 0:
             print ('Start training task with no topology design!')

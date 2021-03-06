@@ -12,7 +12,7 @@ if __name__ == '__main__':
         checkpoint = True
     else checkpoint = False
 
-    dataset, net = 'CIFAR10', 'MobileNet'
+    dataset, net = 'MNIST', 'MNISTNet'
     if dataset == 'MNIST':
         target = 0.99
     elif dataset == 'CIFAR10':

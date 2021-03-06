@@ -11,7 +11,8 @@ if __name__ == '__main__':
     if os.path.exists('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth') or\
         os.path.exists('/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_local.pth'):
         checkpoint = True
-    else checkpoint = False
+    else:
+        checkpoint = False
 
     dataset, net = 'MNIST', 'MNISTNet'
     if dataset == 'MNIST':

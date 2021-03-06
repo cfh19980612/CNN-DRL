@@ -31,7 +31,7 @@ class FedEnv(gym.Env):
         elif self.dataset == 'CIFAR10':
             self.reshapeSize = 3217226
         elif self.dataset == 'FASHION-MNIST':
-            self.reshapeSize = 3217226
+            self.reshapeSize = 1475338
 
         # To DGL graph
         # self.g = dgl.from_networkx(self.G)

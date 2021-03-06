@@ -124,7 +124,7 @@ class FedEnv(gym.Env):
         # fashion mnist
         elif self.dataset == 'FASHION-MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.001, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
             args = parser.parse_args()

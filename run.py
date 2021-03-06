@@ -15,11 +15,13 @@ if __name__ == '__main__':
     else:
         checkpoint = False
 
-    dataset, net = 'MNIST', 'MNISTNet'
+    dataset, net = 'FASHION-MNIST', 'MobileNet'
     if dataset == 'MNIST':
         target = 0.99
     elif dataset == 'CIFAR10':
         target = 0.95
+    elif dataset == 'FASHION-MNIST':
+        target = 0.93
 
     epoches, print_every = 200, 100
     env = FedEnv(Client = 10, k = 9, dataset = dataset, net = net)  # env
@@ -40,6 +42,11 @@ if __name__ == '__main__':
             agent.actor_target.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_target.pth'))
             agent.critic_local.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_local.pth'))
             agent.critic_target.load_state_dict(torch.load('/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_target.pth'))
+        elif dataset == 'FASHION-MNIST':
+            agent.actor_local.load_state_dict(torch.load('/home/fmnist-gcn-drl/checkpoint/drl_fmnist_actor_local.pth'))
+            agent.actor_target.load_state_dict(torch.load('/home/fmnist-gcn-drl/checkpoint/drl_fmnist_actor_target.pth'))
+            agent.critic_local.load_state_dict(torch.load('/home/fmnist-gcn-drl/checkpoint/drl_fmnist_critic_local.pth'))
+            agent.critic_target.load_state_dict(torch.load('/home/fmnist-gcn-drl/checkpoint/drl_fmnist_critic_target.pth'))
 
 
     for i_episode in range(1, 200+1):
@@ -82,14 +89,14 @@ if __name__ == '__main__':
         scores.append(score)
         episode.append(i_episode)
         print('\rEpisode {}\tAverage Score: {:.3f}'.format(i_episode, score), end="\n")
-        torch.save(agent.actor_local.state_dict(), 'checkpoint_actor.pth')
-        torch.save(agent.critic_local.state_dict(), 'checkpoint_critic.pth')
 
         # save reward
         if dataset == 'MNIST':
             location = '/home/mnist-gcn-drl/Test_data/mnist_reward.csv'
         elif dataset == 'CIFAR10':
             location = '/home/cifar-gcn-drl/Test_data/cifar10_reward.csv'
+        elif dataset == 'FASHION-MNIST':
+            location = '/home/fmnist-gcn-drl/Test_data/fmnist_reward.csv'
         dataframe = pd.DataFrame(episode, columns=['X'])
         dataframe = pd.concat([dataframe, pd.DataFrame(scores,columns=['Y'])],axis=1)
         dataframe.to_csv(location,mode='w',header = False,index=False,sep=',')
@@ -108,5 +115,10 @@ if __name__ == '__main__':
         torch.save(agent.actor_target.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_target.pth')
         torch.save(agent.critic_local.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_local.pth')
         torch.save(agent.critic_target.state_dict(),'/home/mnist-gcn-drl/checkpoint/drl_mnist_critic_target.pth')
+    elif dataset == 'FASHION-MNIST':
+        torch.save(agent.actor_local.state_dict(),'/home/fmnist-gcn-drl/checkpoint/drl_fmnist_actor_local.pth')
+        torch.save(agent.actor_target.state_dict(),'/home/fmnist-gcn-drl/checkpoint/drl_fmnist_actor_target.pth')
+        torch.save(agent.critic_local.state_dict(),'/home/fmnist-gcn-drl/checkpoint/drl_fmnist_critic_local.pth')
+        torch.save(agent.critic_target.state_dict(),'/home/fmnist-gcn-drl/checkpoint/drl_fmnist_critic_target.pth')
 
 

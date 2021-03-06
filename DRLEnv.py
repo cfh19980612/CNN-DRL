@@ -48,6 +48,7 @@ class FedEnv(gym.Env):
 
     # Preparing data
     def Set_dataset(self):
+        # cifar10
         if self.dataset == 'CIFAR10':
             parser = argparse.ArgumentParser(description='PyTorch CIFAR10 Training')
             parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
@@ -85,6 +86,8 @@ class FedEnv(gym.Env):
                     'dog', 'frog', 'horse', 'ship', 'truck')
 
             return args, trainloader, testloader
+
+        # mnist
         elif self.dataset == 'MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
             parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
@@ -111,14 +114,43 @@ class FedEnv(gym.Env):
                                                 batch_size = 64,
                                                 shuffle = True)
 
-            testset = torchvision.datasets.MNIST(root="./data/",
-                           transform = transform,
-                           train = False)
+            testset = torchvision.datasets.MNIST(root="./data/", transform = transform, train = False)
 
-            testloader = torch.utils.data.DataLoader(dataset=testset,
-                                               batch_size = 64,
-                                               shuffle = False)
+            testloader = torch.utils.data.DataLoader(dataset=testset, batch_size = 64, shuffle = False)
             return args, trainloader, testloader
+
+        # fashion mnist
+        elif self.dataset == 'FASHION-MNIST':
+            parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
+            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+            parser.add_argument('--resume', '-r', action='store_true',
+                                help='resume from checkpoint')
+            args = parser.parse_args()
+            best_acc = 0  # best test accuracy
+            start_epoch = 0  # start from epoch 0 or last checkpoint epoch
+
+            # Data
+            print('==> Preparing data..')
+            # normalize
+            transform=transforms.Compose([
+            transforms.ToTensor(),
+            transforms.Normalize((0.1307,), (0.3081,))
+            ])
+            # download dataset
+            trainset = torchvision.datasets.FashionMNIST(root = "./data/",
+                            transform=transform,
+                            train = True,
+                            download = True)
+            # load dataset with batch=64
+            trainloader = torch.utils.data.DataLoader(dataset=trainset,
+                                                batch_size = 64,
+                                                shuffle = True)
+
+            testset = torchvision.datasets.MNIST(root="./data/", transform = transform, train = False)
+
+            testloader = torch.utils.data.DataLoader(dataset=testset, batch_size = 64, shuffle = False)
+            return args, trainloader, testloader
+
         else:
             print ('Data load error!')
             return 0
@@ -134,7 +166,16 @@ class FedEnv(gym.Env):
                                 momentum=0.9, weight_decay=5e-4)
             global_model = MNISTNet()
             return Model, global_model, Optimizer
+
         elif self.dataset == 'CIFAR10':
+            for i in range (Client):
+                Model[i] = MobileNet()
+                Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,
+                            momentum=0.9, weight_decay=5e-4)
+            global_model = MobileNet()
+            return Model, global_model, Optimizer
+
+        elif self.dataset == 'FASHION-MNIST':
             for i in range (Client):
                 Model[i] = MobileNet()
                 Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,

@@ -145,6 +145,9 @@ class cnn(nn.Module):
         elif dataset == 'CIFAR10':
             location_acc = '/home/cifar-gcn-drl/Test_data/cifar10_acc_' + str(i_episode) + '.csv'
             location_loss = '/home/cifar-gcn-drl/Test_data/cifar10_loss_' + str(i_episode) + '.csv'
+        elif dataset == 'FASHION-MNIST':
+            location_acc = '/home/fmnist-gcn-drl/Test_data/fmnist_acc_' + str(i_episode) + '.csv'
+            location_loss = '/home/fmnist-gcn-drl/Test_data/fmnist_loss_' + str(i_episode) + '.csv'
 
         dataframe_1 = pd.DataFrame(times, columns=['X'])
         dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(score,columns=['Y'])],axis=1)

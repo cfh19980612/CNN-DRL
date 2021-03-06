@@ -16,6 +16,7 @@ if __name__ == '__main__':
         checkpoint = False
 
     dataset, net = 'FASHION-MNIST', 'MobileNet'
+
     if dataset == 'MNIST':
         target = 0.99
     elif dataset == 'CIFAR10':

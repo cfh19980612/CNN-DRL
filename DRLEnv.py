@@ -30,6 +30,8 @@ class FedEnv(gym.Env):
             self.reshapeSize = 1199882  # PCA reshape
         elif self.dataset == 'CIFAR10':
             self.reshapeSize = 3217226
+        elif self.dataset == 'FASHION-MNIST':
+            self.reshapeSize = 3217226
 
         # To DGL graph
         # self.g = dgl.from_networkx(self.G)

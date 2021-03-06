@@ -179,10 +179,10 @@ class FedEnv(gym.Env):
 
         elif self.dataset == 'FASHION-MNIST':
             for i in range (Client):
-                Model[i] = MobileNet()
+                Model[i] = FashionNet()
                 Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=self.args.lr,
                             momentum=0.9, weight_decay=5e-4)
-            global_model = MobileNet()
+            global_model = FashionNet()
             return Model, global_model, Optimizer
 
     def step(self, action, epoch):

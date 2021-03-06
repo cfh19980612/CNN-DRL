@@ -146,7 +146,7 @@ class FedEnv(gym.Env):
                                                 batch_size = 64,
                                                 shuffle = True)
 
-            testset = torchvision.datasets.MNIST(root="./data/", transform = transform, train = False)
+            testset = torchvision.datasets.FashionMNIST(root="./data/", transform = transform, train = False)
 
             testloader = torch.utils.data.DataLoader(dataset=testset, batch_size = 64, shuffle = False)
             return args, trainloader, testloader

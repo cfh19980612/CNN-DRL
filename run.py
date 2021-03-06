@@ -5,6 +5,7 @@ import torch
 import numpy as np
 import pandas as pd
 from collections import deque
+import os
 
 if __name__ == '__main__':
     print(torch.cuda.is_available())

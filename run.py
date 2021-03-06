@@ -8,7 +8,8 @@ from collections import deque
 
 if __name__ == '__main__':
     print(torch.cuda.is_available())
-    if os.path.exists('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth')
+    if os.path.exists('/home/cifar-gcn-drl/checkpoint/drl_cifar10_actor_local.pth') or\
+        os.path.exists('/home/mnist-gcn-drl/checkpoint/drl_mnist_actor_local.pth'):
         checkpoint = True
     else checkpoint = False
 

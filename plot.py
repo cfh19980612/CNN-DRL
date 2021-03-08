@@ -7,7 +7,7 @@ plt.plot(x1,y1, linestyle = '-.', color = [0.412,0.412,0.412], label = 'FedAVG')
 x11,y11 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_acc_118.csv',delimiter=',',unpack = True)
 plt.plot(x11,y11, linestyle = '-', color = [1,0.65,0], label = 'DRL')
 
-
+plt.grid(linestyle = '--', which='major', linewidth =0.5, color= 'gray',alpha = 0.4)
 plt.xlabel('Time')
 plt.ylabel('Accuracy')
 plt.title('Comparasion')
@@ -23,6 +23,7 @@ plt.plot(x2,y2, linestyle = '-.', color = [0.412,0.412,0.412], label = 'FedAVG')
 x21,y21 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_loss_118.csv',delimiter=',',unpack = True)
 plt.plot(x21,y21, linestyle = '-', color = [1,0.65,0], label = 'DRL')
 
+plt.grid(linestyle = '--', which='major', linewidth =0.5, color= 'gray',alpha = 0.4)
 plt.xlabel('Time')
 plt.ylabel('Loss')
 plt.title('Comparasion')
@@ -34,7 +35,7 @@ plt.cla()
 # reward
 
 x3, y3 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_reward.csv',delimiter=',',unpack = True)
-plt.plot(x3,y3, linestyle = '-.', color = [0.482,0.408,0.933])
+plt.plot(x3,y3, linestyle = '-', color = [0.482,0.408,0.933])
 plt.grid(linestyle = '--', which='major', linewidth =0.5, color= 'gray',alpha = 0.4)
 plt.xlabel('Episode')
 plt.ylabel('Reward')

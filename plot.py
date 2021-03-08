@@ -33,14 +33,9 @@ plt.cla()
 
 # reward
 
-major_y_top=np.linspace(0,20,5)
-major_x_top=np.linspace(0,200,50)
 x3, y3 = np.loadtxt('/home/cifar-gcn-drl/Test_data/cifar10_reward.csv',delimiter=',',unpack = True)
 plt.plot(x3,y3, linestyle = '-.', color = [0.482,0.408,0.933])
-ax = plt.gca()
-ax.yaxis.set_yticks(major_y_top)
-ax.xaxis.set_xticks(major_x_top)
-plt.grid()
+plt.grid(linestyle = '--',linewidth =1, color= 'gray',alpha = 0.4)
 plt.xlabel('Episode')
 plt.ylabel('Reward')
 plt.title('Training')

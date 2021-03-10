@@ -124,7 +124,7 @@ class FedEnv(gym.Env):
         # fashion mnist
         elif self.dataset == 'FASHION-MNIST':
             parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-            parser.add_argument('--lr', default=0.001, type=float, help='learning rate')
+            parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
             parser.add_argument('--resume', '-r', action='store_true',
                                 help='resume from checkpoint')
             args = parser.parse_args()
@@ -236,7 +236,7 @@ class FedEnv(gym.Env):
         state = self.pca.fit_transform(S)
         state = state.flatten()
         # self.toCsv(times,score)
-        reward = pow(64, accuracy-0.95)-0.08*((time/10)+temp)
+        reward = pow(32, accuracy-0.95)-0.05*((time/10)+temp)
         return (time/10)+temp, accuracy, test_loss, state, reward
 
     def reset(self, Tag):

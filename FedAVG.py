@@ -98,6 +98,7 @@ def Set_dataset(dataset):
         parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
         parser.add_argument('--resume', '-r', action='store_true',
                             help='resume from checkpoint')
+        parser.add_argument('--epoch',default=100,type=int,help='epoch')
         args = parser.parse_args()
         best_acc = 0  # best test accuracy
         start_epoch = 0  # start from epoch 0 or last checkpoint epoch

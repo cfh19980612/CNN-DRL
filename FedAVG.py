@@ -92,6 +92,38 @@ def Set_dataset(dataset):
                                             batch_size = 64,
                                             shuffle = False)
         return args, trainloader, testloader
+
+    elif dataset == 'Fashion-MNIST':
+        parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
+        parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+        parser.add_argument('--resume', '-r', action='store_true',
+                            help='resume from checkpoint')
+        args = parser.parse_args()
+        best_acc = 0  # best test accuracy
+        start_epoch = 0  # start from epoch 0 or last checkpoint epoch
+
+        # Data
+        print('==> Preparing data..')
+        # normalize
+        transform=transforms.Compose([
+        transforms.ToTensor(),
+        transforms.Normalize((0.1307,), (0.3081,))
+        ])
+        # download dataset
+        trainset = torchvision.datasets.FashionMNIST(root = "./data/",
+                        transform=transform,
+                        train = True,
+                        download = True)
+        # load dataset with batch=64
+        trainloader = torch.utils.data.DataLoader(dataset=trainset,
+                                            batch_size = 64,
+                                            shuffle = True)
+
+        testset = torchvision.datasets.FashionMNIST(root="./data/", transform = transform, train = False)
+
+        testloader = torch.utils.data.DataLoader(dataset=testset, batch_size = 64, shuffle = False)
+        return args, trainloader, testloader
+
     else:
         print ('Data load error!')
         return 0
@@ -120,6 +152,13 @@ def Set_model(net, client, args):
             Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=args.lr,
                         momentum=0.9, weight_decay=5e-4)
         global_model = ResNet18()
+        return Model, global_model, Optimizer
+    elif net == 'FashionNet':
+        for i in range (client):
+            Model[i] = FashionCNN()
+            Optimizer[i] = torch.optim.SGD(Model[i].parameters(), lr=args.lr,
+                        momentum=0.9, weight_decay=5e-4)
+        global_model = FashionCNN()
         return Model, global_model, Optimizer
 
 def Train(model, optimizer, client, trainloader):
@@ -196,6 +235,8 @@ def run(dataset, net, client):
         target = 0.98
     elif dataset == 'CIFAR10':
         target = 0.9
+    elif dataset == 'Fashion-MNIST':
+        target = 0.93
 
     latency = [0 for i in range (client)]   #latency between clients
     for i in range (client):
@@ -232,6 +273,9 @@ def run(dataset, net, client):
     elif dataset == 'MNIST':
         location_acc = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_ACC.csv'
         location_loss = '/home/mnist-gcn-drl/Test_data/FedAVG_mnist_LOSS.csv'
+    elif dataset == 'Fashion-MNIST':
+        location_acc = '/home/fmnist-gcn-drl/Test_data/FedAVG_fmnist_ACC.csv'
+        location_loss = '/home/fmnist-gcn-drl/Test_data/FedAVG_fmnist_LOSS.csv'
 
     dataframe_1 = pd.DataFrame(X, columns=['X'])
     dataframe_1 = pd.concat([dataframe_1, pd.DataFrame(Y,columns=['Y'])],axis=1)
@@ -241,4 +285,4 @@ def run(dataset, net, client):
     dataframe.to_csv(location_loss,mode = 'w', header = False,index=False,sep=',')
 
 if __name__ == '__main__':
-    run(dataset = 'CIFAR10', net = 'MobileNet', client = 10)
+    run(dataset = 'Fashion-MNIST', net = 'FashionNet', client = 10)

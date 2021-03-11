@@ -95,7 +95,7 @@ def Set_dataset(dataset):
 
     elif dataset == 'Fashion-MNIST':
         parser = argparse.ArgumentParser(description='PyTorch MNIST Training')
-        parser.add_argument('--lr', default=0.01, type=float, help='learning rate')
+        parser.add_argument('--lr', default=0.001, type=float, help='learning rate')
         parser.add_argument('--resume', '-r', action='store_true',
                             help='resume from checkpoint')
         parser.add_argument('--epoch',default=100,type=int,help='epoch')
